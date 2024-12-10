@@ -5,7 +5,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:sqlorder24/components/commoncolor.dart';
-
 import 'package:sqlorder24/components/customSearchTile.dart';
 import 'package:sqlorder24/components/customSnackbar.dart';
 import 'package:sqlorder24/components/popupPayment.dart';
@@ -611,8 +610,9 @@ class _ReturnItem2State extends State<ReturnItem2> {
                                                 s[0],
                                                 s[1],
                                                 widget.branch_id,
-                                                value.newList[index]
-                                                    ["ActStock"],
+                                                0.00,
+                                                // value.newList[index]
+                                                //     ["ActStock"],
                                                 "return");
                                           }
                                         },
@@ -653,9 +653,9 @@ class _ReturnItem2State extends State<ReturnItem2> {
                                                             FontWeight.bold),
                                                   ),
                                                 ),
-                                                Text(value.newList[index]
-                                                        ["ActStock"]
-                                                    .toString())
+                                                // Text(value.newList[index]
+                                                //         ["ActStock"]
+                                                //     .toString())
                                                 // value.newList[index]
                                                 //             [
                                                 //             "qty"] ==
@@ -711,15 +711,21 @@ class _ReturnItem2State extends State<ReturnItem2> {
                                   value.selectedunit_X001 = null;
                                   print(
                                       "item name...${value.salesitemListdata2[0]['item']}");
-                                  if (value.isLoading) {
+
+                                  if (value.isLoading) 
+                                  {
                                     CircularProgressIndicator();
-                                  } else {
+                                  } 
+
+                                  else 
+                                  {
                                     value.discount_prercent_X001[index].text =
                                         "0.0";
                                     value.discount_amount_X001[index].text =
                                         "0.0";
                                     print(
                                         "kjdjfkj-${value.salesitemListdata2[0]['code']}----${value.salesitemListdata2[0]['item']}---${value.salesitemListdata2[0]['rate1']}----${value.salesitemListdata2[0]['tax']}");
+                                                                          
                                     // value.selectedItem =
                                     //     null;
                                     value.gross = 0.00;
@@ -736,8 +742,7 @@ class _ReturnItem2State extends State<ReturnItem2> {
 
                                     value.salesqty_X001[index].text = "1.0";
                                     double negtivqty = -double.parse(
-                                                value
-                                                    .salesqty_X001[index].text);
+                                        value.salesqty_X001[index].text);
                                     Provider.of<Controller>(context,
                                             listen: false)
                                         .rawCalculation_X001(
@@ -780,7 +785,8 @@ class _ReturnItem2State extends State<ReturnItem2> {
                                         s[0],
                                         s[1],
                                         widget.branch_id,
-                                        value.salesitemList2[index]["ActStock"],
+                                        0.00,
+                                        // value.salesitemList2[index]["ActStock"],
                                         "return");
                                   }
                                 },
@@ -806,9 +812,9 @@ class _ReturnItem2State extends State<ReturnItem2> {
                                                 fontWeight: FontWeight.bold),
                                           ),
                                         ),
-                                        Text(value.salesitemList2[index]
-                                                ["ActStock"]
-                                            .toString())
+                                        // Text(value.salesitemList2[index]
+                                        //         ["ActStock"]
+                                        //     .toString())
                                         // value.salesitemList2[index]
                                         //             [
                                         //             "qty"] ==

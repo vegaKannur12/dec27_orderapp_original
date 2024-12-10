@@ -322,6 +322,7 @@ class Controller extends ChangeNotifier {
   bool connectedblu = false;
   double totalAftrdiscount = 0.0;
   Map<String, dynamic>? datafromFile;
+
 //////////////////////////////REGISTRATION ///////////////////////////
   // Future<RegistrationData?> postRegistration(
   //     String company_code,
@@ -2690,11 +2691,9 @@ class Controller extends ChangeNotifier {
       String? refNo,
       String? reason,
       BuildContext context,
-      String branch_id
-) async {
+      String branch_id) async {
     print(
         "values--------$date--$time$customer_id-$user_id--$aid--$total_price--$refNo--$reason--$os");
-
     int return_id = await OrderAppDB.instance
         .calculateMaxSeries('$os', 'returnMasterTable', 'return_id');
     print("return_id----$return_id");
@@ -2748,60 +2747,117 @@ class Controller extends ChangeNotifier {
           cess_tot,
           0.0,
           roundoff,
+          0,
           0);
 
       for (var item in returnbagList) {
         print("item---${item["unit"]}");
         double gross = item["unit_rate"] * item["qty"];
         // double rate = double.parse(item["rate"]);
-        await OrderAppDB.instance.insertreturnMasterandDetailsTable(
-            item["itemName"],
-            return_id,
-            item["qty"],
-            double.parse(item["rate"]),
-            item["code"],
-            date,
-            time,
-            os,
-            customer_id,
-            user_id,
-            aid,
-            0,
-            item["unit_name"],
-            rowNum,
-            "returnDetailTable",
-            total_price,
-            "",
-            "",
-            0.0,
-            item["baserate"],
-            item["package"],
-            branch_id,
-            item["hsn"],
-            billNo,
-            0,
-            "",
-            "",
-            gross,
-            item["discount_amt"],
-            item["discount_per"],
-            item["tax_amt"],
-            item["tax_per"],
-            item["cgst_per"],
-            item["cgst_amt"],
-            item["sgst_per"],
-            item["sgst_amt"],
-            item["igst_per"],
-            item["igst_amt"],
-            item["ces_amt"],
-            item["ces_per"],
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            item["net_amt"],
-            roundoff,
-            0);
+        if (item["damagegood"] == 1) {
+          print("it is damaged item");
+          await OrderAppDB.instance.insertreturnMasterandDetailsTable(
+              item["itemName"],
+              return_id,
+              0, //item["qty"]
+              double.parse(item["rate"]),
+              item["code"],
+              date,
+              time,
+              os,
+              customer_id,
+              user_id,
+              aid,
+              0,
+              item["unit_name"],
+              rowNum,
+              "returnDetailTable",
+              total_price,
+              "",
+              "",
+              0.0,
+              item["baserate"],
+              item["package"],
+              branch_id,
+              item["hsn"],
+              billNo,
+              0,
+              "",
+              "",
+              gross,
+              item["discount_amt"],
+              item["discount_per"],
+              item["tax_amt"],
+              item["tax_per"],
+              item["cgst_per"],
+              item["cgst_amt"],
+              item["sgst_per"],
+              item["sgst_amt"],
+              item["igst_per"],
+              item["igst_amt"],
+              item["ces_amt"],
+              item["ces_per"],
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              item["net_amt"],
+              roundoff,
+              0,
+              item["qty"]);
+        } else {
+            print("not damageed");
+          await OrderAppDB.instance.insertreturnMasterandDetailsTable(
+              item["itemName"],
+              return_id,
+              item["qty"],
+              double.parse(item["rate"]),
+              item["code"],
+              date,
+              time,
+              os,
+              customer_id,
+              user_id,
+              aid,
+              0,
+              item["unit_name"],
+              rowNum,
+              "returnDetailTable",
+              total_price,
+              "",
+              "",
+              0.0,
+              item["baserate"],
+              item["package"],
+              branch_id,
+              item["hsn"],
+              billNo,
+              0,
+              "",
+              "",
+              gross,
+              item["discount_amt"],
+              item["discount_per"],
+              item["tax_amt"],
+              item["tax_per"],
+              item["cgst_per"],
+              item["cgst_amt"],
+              item["sgst_per"],
+              item["sgst_amt"],
+              item["igst_per"],
+              item["igst_amt"],
+              item["ces_amt"],
+              item["ces_per"],
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              item["net_amt"],
+              roundoff,
+              0,
+              0);
+        }
+
         rowNum = rowNum + 1;
       }
     }
@@ -5722,17 +5778,17 @@ class Controller extends ChangeNotifier {
       int index,
       bool onSub,
       String? disCalc) {
-      flag = false;
-      print(
+    flag = false;
+    print(
         "attribute---  = $rate, $qty, $state_status, $disCalc ,$disc_per ,$disc_amount ,$tax_per ,$cess_per ,$method");
-      if (method == "0") {
+    if (method == "0") {
       /////////////////////////////////method=="0" - excluisive , method=1 - inclusive
       taxable_rate = rate;
-      } else if (method == "1") {
+    } else if (method == "1") {
       double percnt = tax_per + cess_per;
       taxable_rate = rate * (1 - (percnt / (100 + percnt)));
       print("exclusive tax....$percnt...$taxable_rate");
-      }
+    }
     print("exclusive tax.....= $taxable_rate");
     // qty=qty+1;
     gross = taxable_rate * qty;

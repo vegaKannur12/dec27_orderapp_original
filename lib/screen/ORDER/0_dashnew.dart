@@ -424,7 +424,7 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin {
           });
           return StockReport();
         }
-
+                  
       // case "3":
       //   {
       //     Provider.of<Controller>(context, listen: false).setDate(s[0], "");

@@ -16,7 +16,7 @@ class SaleCartX001 extends StatefulWidget {
   String areaname;
   String type;
   String branch_id;
-  SaleCartX001(
+  SaleCartX001( 
       {required this.areaId,
       required this.custmerId,
       required this.os,
@@ -505,7 +505,7 @@ class _SaleCartX001State extends State<SaleCartX001> {
                                       print(
                                           "disc in rupee----------------${discInRupee}");
                                       print(
-                                          "totalaftrDisc----------------${value.totalAftrdiscount}");
+                                          "totalaftrDisc----------------${value.totalAftrdiscount}");      
                                       paysheet.showpaymentSheet(
                                           context,
                                           widget.areaId,
@@ -520,7 +520,7 @@ class _SaleCartX001State extends State<SaleCartX001> {
                                           double.tryParse(discPerCtrl.text) ??
                                               0.00,
                                           discInRupee,
-                                          value.totalAftrdiscount);
+                                          value.totalAftrdiscount,"salecart");
                                     }
                                     Provider.of<Controller>(context,
                                             listen: false)

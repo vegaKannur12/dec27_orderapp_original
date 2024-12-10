@@ -262,6 +262,8 @@ class OrderAppDB {
   static final tot_aftr_disc = 'tot_aftr_disc';
   static final sflag = 'sflag';
   static final rflag = 'rflag';
+  static final damagegood = 'damagegood';
+  static final qtydmg = 'qtydmg';
 
   Future<Database> get database async {
     print("bjhs");
@@ -601,8 +603,8 @@ class OrderAppDB {
             $unit_name TEXT,
             $package REAL,
             $baserate REAL,
-            $brrid TEXT
-            
+            $brrid TEXT,
+            $damagegood INTEGER    
           )
           ''');
     ////////////////////////////////////////
@@ -775,7 +777,8 @@ class OrderAppDB {
             $igst_amt REAL,
             $ces_amt REAL,
             $ces_per REAL,
-            $net_amt REAL
+            $net_amt REAL,
+            $qtydmg INTEGER
           )
           ''');
     await db.execute('''
@@ -932,7 +935,8 @@ class OrderAppDB {
       String? unit_name,
       double packagenm,
       double baseRate,
-      String branch_id) async {
+      String branch_id,
+      int damagegood) async {
     print("qty--$qty...$unit_name..$packagenm...$cartrowno");
     print("code...........$code");
     final db = await database;
@@ -961,10 +965,9 @@ class OrderAppDB {
       print("response-------$res");
     } else {
       query2 =
-          'INSERT INTO returnBagTable (itemName, cartdate, carttime , os, customerid, cartrowno,code, qty, rate,unit_rate, totalamount, method, hsn,tax_per, tax_amt, cgst_per, cgst_amt, sgst_per, sgst_amt, igst_per, igst_amt,ces_per,ces_amt,discount_per,discount_amt, cstatus, net_amt, pid, unit_name, package, baseRate,brrid) VALUES ("${itemName}","${cartdate}","${carttime}", "${os}", "${customerid}", $cartrowno, "${code}", $qty, "${rate}",$unit_rate, "${totalamount}","${method}", "${hsn}",${tax_per}, ${tax}, ${cgst_per}, ${cgst_amt}, ${sgst_per}, ${sgst_amt}, ${igst_per}, ${igst_amt},${ces_per},${ces_amt},$discount_per,$discount_amt, $cstatus,"$net_amt" , $pid, "$unit_name", $packagenm, $baseRate,"$branch_id")';
+          'INSERT INTO returnBagTable (itemName, cartdate, carttime , os, customerid, cartrowno,code, qty, rate,unit_rate, totalamount, method, hsn,tax_per, tax_amt, cgst_per, cgst_amt, sgst_per, sgst_amt, igst_per, igst_amt,ces_per,ces_amt,discount_per,discount_amt, cstatus, net_amt, pid, unit_name, package, baseRate,brrid,damagegood) VALUES ("${itemName}","${cartdate}","${carttime}", "${os}", "${customerid}", $cartrowno, "${code}", $qty, "${rate}",$unit_rate, "${totalamount}","${method}", "${hsn}",${tax_per}, ${tax}, ${cgst_per}, ${cgst_amt}, ${sgst_per}, ${sgst_amt}, ${igst_per}, ${igst_amt},${ces_per},${ces_amt},$discount_per,$discount_amt, $cstatus,"$net_amt" , $pid, "$unit_name", $packagenm, $baseRate,"$branch_id",$damagegood)';
       var res = await db.rawInsert(query2);
     }
-
     print("insert query result $res");
     print("insert-----$query2");
     return res;
@@ -1203,62 +1206,63 @@ class OrderAppDB {
 
   ////////////////////insert to return table/////////////////////////////////
   Future insertreturnMasterandDetailsTable(
-    String item,
-    int return_id,
-    double qty,
-    double rate,
-    String? code,
-    String return_date,
-    String return_time,
-    String os,
-    String customerid,
-    String userid,
-    String areaid,
-    int status,
-    String? unit,
-    int rowNum,
-    String table,
-    double total_price,
-    String reason,
-    String refNo,
-    double? unit_value,
-    double? base_rate,
-    double? packing,
-    String? branch_id,
-    String hsn,
-    String bill_no,
-    int total_qty,
-    String payment_mode,
-    String credit_option,
-    double gross_amount,
-    double dis_amt,
-    double dis_per,
-    double tax_amt,
-    double tax_per,
-    double cgst_per,
-    double cgst_amt,
-    double sgst_per,
-    double sgst_amt,
-    double igst_per,
-    double igst_amt,
-    double ces_amt,
-    double ces_per,
-    double gross_tot,
-    double dis_tot,
-    double tax_tot,
-    double ces_tot,
-    double net_amt,
-    double rounding,
-    int state_status,
-  ) async {
+      String item,
+      int return_id,
+      double qty,
+      double rate,
+      String? code,
+      String return_date,
+      String return_time,
+      String os,
+      String customerid,
+      String userid,
+      String areaid,
+      int status,
+      String? unit,
+      int rowNum,
+      String table,
+      double total_price,
+      String reason,
+      String refNo,
+      double? unit_value,
+      double? base_rate,
+      double? packing,
+      String? branch_id,
+      String hsn,
+      String bill_no,
+      int total_qty,
+      String payment_mode,
+      String credit_option,
+      double gross_amount,
+      double dis_amt,
+      double dis_per,
+      double tax_amt,
+      double tax_per,
+      double cgst_per,
+      double cgst_amt,
+      double sgst_per,
+      double sgst_amt,
+      double igst_per,
+      double igst_amt,
+      double ces_amt,
+      double ces_per,
+      double gross_tot,
+      double dis_tot,
+      double tax_tot,
+      double ces_tot,
+      double net_amt,
+      double rounding,
+      int state_status,
+      double dmgqty) async {
     final db = await database;
     var res2;
     var res3;
     int qty1 = qty.toInt();
+    int qty2 = dmgqty.toInt();
     print("qty return.......$unit.....$qty...$qty1");
     if (table == "returnDetailTable") {
       var query2 =
-          'INSERT INTO returnDetailTable(return_id, row_num,os,code, item, qty, unit, rate, packing, baserate,hsn,gross_amount,dis_amt,dis_per,tax_amt,tax_per,cgst_per,cgst_amt,sgst_per,sgst_amt,igst_per,igst_amt,ces_amt,ces_per,net_amt) VALUES(${return_id},${rowNum},"${os}","${code}","${item}", ${qty1}, "${unit}", ${rate}, $packing, $base_rate,"${hsn}", $gross_amount,$dis_amt, ${dis_per}, ${tax_amt.toStringAsFixed(3)}, $tax_per,${cgst_per}, ${cgst_amt.toStringAsFixed(3)},${sgst_per}, ${sgst_amt.toStringAsFixed(3)},${igst_per}, ${igst_amt.toStringAsFixed(3)}, $ces_amt, $ces_per,$total_price)';
+          'INSERT INTO returnDetailTable(return_id, row_num,os,code, item, qty, unit, rate, packing, baserate,hsn,gross_amount,dis_amt,dis_per,tax_amt,tax_per,cgst_per,cgst_amt,sgst_per,sgst_amt,igst_per,igst_amt,ces_amt,ces_per,net_amt,qtydmg) VALUES(${return_id},${rowNum},"${os}","${code}","${item}", ${qty1}, "${unit}", ${rate}, $packing, $base_rate,"${hsn}", $gross_amount,$dis_amt, ${dis_per}, ${tax_amt.toStringAsFixed(3)}, $tax_per,${cgst_per}, ${cgst_amt.toStringAsFixed(3)},${sgst_per}, ${sgst_amt.toStringAsFixed(3)},${igst_per}, ${igst_amt.toStringAsFixed(3)}, $ces_amt, $ces_per,$total_price,$qty2)';
       print(query2);
       res2 = await db.rawInsert(query2);
     } else if (table == "returnMasterTable") {
@@ -1443,8 +1447,7 @@ class OrderAppDB {
   }
 
 ///////////////////////////////////////stock details/////////////////////////////////////
-  Future insertStockDetails(StockDetails sdata) async 
-{
+  Future insertStockDetails(StockDetails sdata) async {
     final db = await database;
     var query3 =
         'INSERT INTO stockDetailsTable(ppid,pstock,pstockout) VALUES("${sdata.ppid}","${sdata.pstock}","0")';
@@ -2313,40 +2316,58 @@ class OrderAppDB {
     //     "SELECT pd.pid,pd.code,pd.item,u.unit_name unit,u.package pkg,pd.companyId,pd.hsn, " +
     //     "pd.tax,pd.prate,pd.mrp,pd.cost,pd.rate1 , pd.categoryId  from 'productDetailsTable' pd " +
     //     "inner join 'productUnits' u  ON u.pid = pd.pid ";
-    if (type == "sale order") {
+    if (type == "sale order") 
+    {
       itemselectionquery =
           "SELECT p.pid prid,p.code prcode,p.item pritem ,p.hsn hsn ,p.rate1 prrate1,sum(o.qty) qty" +
               " from 'productDetailsTable' p left join 'orderBagTable' o on p.code =o.code and o.customerid='$customerId' group by p.pid,p.code,p.item order by p.item";
-    } else if (type == "sales") {
+    } 
+    else if 
+    (type == "sales") 
+    {
       // itemselectionquery =
       //     "SELECT p.pid prid,p.code prcode,p.item pritem ,p.hsn hsn ,p.rate1 prrate1,sum(s.qty) qty" +
       //         " from 'productDetailsTable' p left join 'salesBagTable' s on p.code  = s.code and s.customerid='$customerId' group by p.pid,p.code,p.item order by p.item";
       itemselectionquery = " SELECT p.pid prid,p.code prcode,p.item pritem ,p.hsn hsn ,p.rate1 prrate1,sum(s.qty) qty, " +
-          "(cast(st.pstock as real)-IFNULL(x.slQty,0) ) ActStock ," +
+          "(cast(st.pstock as real)-IFNULL(x.slQty,0)-IFNULL(y.rtQty,0) ) ActStock ," +
           "(case when sum(s.qty)>=0 then 1 else 0 end) sflag " +
           "from 'productDetailsTable' p " +
           "left join stockDetailsTable st on p.code=st.ppid and cast(st.pstock as real) >= 0 " +
           "Left Join (Select sd.code slCode , sum(sd.qty) slQty from salesMasterTable sm " +
           "Inner Join salesDetailTable sd on sm.sales_id=sd.sales_id " +
           "where sm.sflag = 0 and sm.cancel=0 Group By sd.code) x on x.slCode= st.ppid " +
+          "Left Join (Select rd.code rtCode , sum(rd.qty) rtQty from returnMasterTable rm " +
+          "Inner Join returnDetailTable rd on rm.return_id=rd.return_id " +
+          "where rm.rflag = 0 Group By rd.code) y " +
+          "on y.rtCode= st.ppid " +
           "left join 'salesBagTable' s on p.code  = s.code and s.customerid='$customerId' " +
           "group by p.pid,p.code,p.item order by (case when sum(s.qty)>=0 then 1 else 0 end) desc, p.item";
     } 
-    else if (type == "return") {
+    else if 
+    (type == "return") 
+    {
       // itemselectionquery =
       //     "SELECT p.pid prid,p.code prcode,p.item pritem ,p.hsn hsn ,p.rate1 prrate1,sum(s.qty) qty" +
       //         " from 'productDetailsTable' p left join 'salesBagTable' s on p.code  = s.code and s.customerid='$customerId' group by p.pid,p.code,p.item order by p.item";
       itemselectionquery =
-          " SELECT p.pid prid,p.code prcode,p.item pritem ,p.hsn hsn ,p.rate1 prrate1,sum(s.qty) qty, " +
-              "(cast(st.pstock as real)-IFNULL(x.slQty,0) ) ActStock ," +
-              "(case when sum(s.qty)>=0 then 1 else 0 end) sflag " +
+              " SELECT p.pid prid,p.code prcode,p.item pritem ,p.hsn hsn ,p.rate1 prrate1,sum(s.qty) qty " +
               "from 'productDetailsTable' p " +
-              "left join stockDetailsTable st on p.code=st.ppid and cast(st.pstock as real) >= 0 " +
-              "Left Join (Select rd.code slCode , sum(rd.qty) slQty from returnMasterTable rm " +
-              "Inner Join returnDetailTable rd on rm.return_id=rd.return_id " +
-              "where rm.rflag = 0 Group By rd.code) x on x.slCode= st.ppid " +
               "left join 'returnBagTable' s on p.code  = s.code and s.customerid='$customerId' " +
-              "group by p.pid,p.code,p.item order by (case when sum(s.qty)>=0 then 1 else 0 end) desc, p.item";
+              "group by p.pid,p.code,p.item order by p.item";
+              
+              //  itemselectionquery =
+              // " SELECT p.pid prid,p.code prcode,p.item pritem ,p.hsn hsn ,p.rate1 prrate1,sum(s.qty) qty, " +
+              // "(cast(st.pstock as real)-IFNULL(x.slQty,0) ) ActStock ," +
+              // "(case when sum(s.qty)>=0 then 1 else 0 end) sflag " +
+              // // "(case when s.damagegood=0) " +
+              // "from 'productDetailsTable' p " +
+              // "left join stockDetailsTable st on p.code=st.ppid and cast(st.pstock as real) >= 0 " + //stok delete
+              // "Left Join (Select rd.code slCode , sum(rd.qty) slQty from returnMasterTable rm " +
+              // "Inner Join returnDetailTable rd on rm.return_id=rd.return_id " +
+              // "where rm.rflag = 0 Group By rd.code) x on x.slCode= st.ppid " +
+              // "left join 'returnBagTable' s on p.code  = s.code and s.customerid='$customerId' " +
+              // // "where s.damagegood=0 " +
+              // "group by p.pid,p.code,p.item order by (case when sum(s.qty)>=0 then 1 else 0 end) desc, p.item";
     }
 
     // unitquery = "select k.*,b.*, (k.prbaserate * k.pkg ) prrate1 from (" +
@@ -2356,7 +2377,7 @@ class OrderAppDB {
     //     "AND b.customerid='$customerId' and " +
     //     "b.unit_name = k.prunit " +
     //     " order by b.cartrowno  DESC,k.pritem,k.prcode;";
-//  b.cartrowno DESC
+    //  b.cartrowno DESC
 
     print("unit queryyyy..$itemselectionquery");
     result = await db.rawQuery(itemselectionquery);
@@ -2373,14 +2394,29 @@ class OrderAppDB {
     Database db = await instance.database;
     var stockreport;
     stockreport = "SELECT p.code prcode,p.item pritem, " +
-        "st.pstock OpStock,IFNULL(x.slQty,0) SalesQty, " +
-        "(cast(st.pstock as real)-IFNULL(x.slQty,0) ) BalStock " +
+        "st.pstock OpStock,IFNULL(x.slQty,0) SalesQty,IFNULL(abs(y.rtQty),0) ReturnQty, " +
+        "(cast(st.pstock as real)-IFNULL(x.slQty,0)-IFNULL(y.rtQty,0) ) BalStock " +
         "from 'productDetailsTable' p " +
         "inner join stockDetailsTable st on p.code=st.ppid and cast(st.pstock as real)  > 0 " +
         "Left Join (Select sd.code slCode , sum(sd.qty) slQty from salesMasterTable sm " +
         "Inner Join salesDetailTable sd on sm.sales_id=sd.sales_id " +
-        "where sm.sflag = 0 and sm.cancel=0 Group By sd.code) x on x.slCode= st.ppid " +
+        "where sm.sflag = 0 and sm.cancel=0 Group By sd.code) x " +
+        "on x.slCode= st.ppid " +
+        "Left Join (Select rd.code rtCode , sum(rd.qty) rtQty from returnMasterTable rm " +
+        "Inner Join returnDetailTable rd on rm.return_id=rd.return_id " +
+        "where rm.rflag = 0 Group By rd.code) y " +
+        "on y.rtCode= st.ppid " +
         "group by p.code,p.item order by p.item ";
+
+    //    stockreport = "SELECT p.code prcode,p.item pritem, " +
+    // "st.pstock OpStock,IFNULL(x.slQty,0) SalesQty, " +
+    // "(cast(st.pstock as real)-IFNULL(x.slQty,0) ) BalStock " +
+    // "from 'productDetailsTable' p " +
+    // "inner join stockDetailsTable st on p.code=st.ppid and cast(st.pstock as real)  > 0 " +
+    // "Left Join (Select sd.code slCode , sum(sd.qty) slQty from salesMasterTable sm " +
+    // "Inner Join salesDetailTable sd on sm.sales_id=sd.sales_id " +
+    // "where sm.sflag = 0 and sm.cancel=0 Group By sd.code) x on x.slCode= st.ppid " +
+    // "group by p.code,p.item order by p.item ";
     print("stock report..$stockreport");
     result = await db.rawQuery(stockreport);
     print("stock report daat--${result}");

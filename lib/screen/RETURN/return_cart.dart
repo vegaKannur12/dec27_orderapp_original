@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:sqlorder24/components/common_popup.dart';
 import 'package:sqlorder24/components/commoncolor.dart';
+import 'package:sqlorder24/components/popupPayment.dart';
 import 'package:sqlorder24/controller/controller.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -13,6 +14,7 @@ class ReturnCart extends StatefulWidget {
   String areaname;
   String type;
   String branch_id;
+
   ReturnCart(
       {required this.areaId,
       required this.custmerId,
@@ -38,6 +40,7 @@ class _ReturnCartState extends State<ReturnCart> {
   bool isAdded = false;
   String? sname;
   CommonPopup returnPop = CommonPopup();
+  PaymentSelect paysheet = PaymentSelect();
   @override
   void initState() {
     print("type===${widget.type}");
@@ -117,11 +120,12 @@ class _ReturnCartState extends State<ReturnCart> {
                           ),
                           ElevatedButton(
                             style: ElevatedButton.styleFrom(
-                                backgroundColor: P_Settings.extracolor,
-                                textStyle: TextStyle(
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.bold,
-                                ),),
+                              backgroundColor: P_Settings.extracolor,
+                              textStyle: TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                             onPressed: () {
                               Navigator.pop(context);
                               // Navigator.of(context).push(
@@ -355,7 +359,26 @@ class _ReturnCartState extends State<ReturnCart> {
                                           0.0,
                                           0.0),
                                 );
+                                // if (value.returnbagList.length > 0) {
+                                //   print(
+                                //       "baserate on save-----${value.orderTotal2[11].toString()}");
 
+                                //   paysheet.showpaymentSheet(
+                                //       context,
+                                //       widget.areaId,
+                                //       widget.areaname,
+                                //       widget.custmerId,
+                                //       s[0],
+                                //       s[1],
+                                //       refController.text,
+                                //       reasonController.text,
+                                //       value.orderTotal2[11],
+                                //       widget.branch_id,
+                                //       0.00,
+                                //       0.00,
+                                //       value.totalAftrdiscount,
+                                //       "returncart");
+                                // }
                                 final prefs =
                                     await SharedPreferences.getInstance();
                                 String? sid = await prefs.getString('sid');

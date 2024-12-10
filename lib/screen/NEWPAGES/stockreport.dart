@@ -84,9 +84,10 @@ class _StockReportState extends State<StockReport> {
                   : Column(
                       children: [
                         Container(
-                          margin: EdgeInsets.all(5),
+                          margin: EdgeInsets.all(2),
                           width: size.width,
                           child: DataTable(
+                            columnSpacing: 2,
                             border: TableBorder.all(width: 1),
                             showBottomBorder: true,
                             // datatable widget
@@ -102,20 +103,29 @@ class _StockReportState extends State<StockReport> {
                                   style: TextStyle(fontSize: 12),
                                 )),
                               ),
-                             
+
                               DataColumn(
                                 label: Text(
                                   'Stock',
                                   style: TextStyle(fontSize: 12),
                                 ),
                               ),
-                               DataColumn(
+                              DataColumn(
+                                label: Container(
+                                  width: 20,
+                                  child: Text(
+                                    'Sale',
+                                    style: TextStyle(fontSize: 12),
+                                  ),
+                                ),
+                              ),
+                              DataColumn(
                                 label: Text(
-                                  'Sale',
+                                  'Return',
                                   style: TextStyle(fontSize: 12),
                                 ),
                               ),
-                               DataColumn(
+                              DataColumn(
                                 label: Text(
                                   'Balance',
                                   style: TextStyle(fontSize: 12),
@@ -127,26 +137,59 @@ class _StockReportState extends State<StockReport> {
                                 .map(
                                   ((element) => DataRow(
                                         cells: <DataCell>[
-                                          DataCell(Container(
-                                            // width: 40,
-                                            child: Text(
-                                              "${element["pritem"]} ( ${element["prcode"].toString()} )",
-                                              style: TextStyle(fontSize: 12),
-                                              // element["sale_Num"]
+                                          DataCell(
+                                          
+                                            Container(
+                                            // width: 50,
+                                            child: Align(alignment: Alignment.centerLeft,
+                                              child: Text(
+                                                "${element["pritem"]} ( ${element["prcode"].toString()} )",
+                                                style: TextStyle(fontSize: 12),
+                                                // element["sale_Num"]
+                                              ),
                                             ),
-                                          )), //Extracting from Map element the value                     
-                                          DataCell(Text(
-                                            element["OpStock"].toString(),
-                                            style: TextStyle(fontSize: 12),
+                                          )), //Extracting from Map element the value
+                                          DataCell(Container(
+                                            width: 40,
+                                            child: Align(alignment: Alignment.centerRight,
+                                              child: Text(
+                                                element["OpStock"].toString(),
+                                                style: TextStyle(fontSize: 12),
+                                              ),
+                                            ),
                                           )),
-                                          DataCell(Text(
-                                            element["SalesQty"].toStringAsFixed(1),
-                                            style: TextStyle(fontSize: 12),
+                                          DataCell(Container(
+                                            width: 40,
+                                            child: Align(alignment: Alignment.centerRight,
+                                              child: Text(
+                                                element["SalesQty"]
+                                                    .toStringAsFixed(1),
+                                                style: TextStyle(fontSize: 12),
+                                              ),
+                                            ),
+                                          ),),
+                                          DataCell(
+                                            Container(
+                                            width: 40,
+                                            child: Align(alignment: Alignment.centerRight,
+                                              child: Text(
+                                                element["ReturnQty"]
+                                                    .toStringAsFixed(1),
+                                                style: TextStyle(fontSize: 12),
+                                              ),
+                                            ),
                                           )),
-                                          DataCell(Text(
-                                            element["BalStock"].toStringAsFixed(1),
-                                            style: TextStyle(fontSize: 12),
-                                          )),
+                                          DataCell(
+                                            Container(width: 40,
+                                              child: Align(alignment: Alignment.centerRight,
+                                                child: Text(
+                                                  element["BalStock"]
+                                                      .toStringAsFixed(1),
+                                                  style: TextStyle(fontSize: 12),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
                                         ],
                                       )),
                                 )
