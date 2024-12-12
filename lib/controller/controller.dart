@@ -1,5 +1,4 @@
 import 'dart:math';
-
 import 'package:bluetooth_thermal_printer/bluetooth_thermal_printer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -2681,17 +2680,19 @@ class Controller extends ChangeNotifier {
 
 ///////////////////////insertreturnMasterandDetailsTable//////////////////////////////
   insertreturnMasterandDetailsTable(
-      String os,
-      String date,
-      String time,
-      String customer_id,
-      String user_id,
-      String aid,
-      double total_price,
-      String? refNo,
-      String? reason,
-      BuildContext context,
-      String branch_id) async {
+    String os,
+    String date,
+    String time,
+    String customer_id,
+    String user_id,
+    String aid,
+    double total_price,
+    String? refNo,
+    String? reason,
+    BuildContext context,
+    String branch_id,
+    String payment_mode,
+  ) async {
     print(
         "values--------$date--$time$customer_id-$user_id--$aid--$total_price--$refNo--$reason--$os");
     int return_id = await OrderAppDB.instance
@@ -2701,32 +2702,26 @@ class Controller extends ChangeNotifier {
     if (returnbagList.length > 0) {
       String billNo = "${os}" + "${return_id}";
       await OrderAppDB.instance.insertreturnMasterandDetailsTable(
-          "",
           return_id,
           0,
           0.0,
+          0.0,
           " ",
+          "",
           date,
           time,
           os,
           customer_id,
+          "",
+          billNo,
           user_id,
           aid,
           0,
+          payment_mode.toString(),
+          "",
           "",
           rowNum,
           "returnMasterTable",
-          total_price,
-          reason!,
-          refNo!,
-          0.0,
-          0.0,
-          0.0,
-          branch_id,
-          "",
-          billNo,
-          0,
-          "",
           "",
           0.0,
           0.0,
@@ -2746,8 +2741,16 @@ class Controller extends ChangeNotifier {
           tax_tot,
           cess_tot,
           0.0,
+          total_price,
           roundoff,
           0,
+          0,
+          0.0,
+          0.0,
+          0.0,
+          branch_id,
+          reason!,
+          refNo!,
           0);
 
       for (var item in returnbagList) {
@@ -2757,33 +2760,27 @@ class Controller extends ChangeNotifier {
         if (item["damagegood"] == 1) {
           print("it is damaged item");
           await OrderAppDB.instance.insertreturnMasterandDetailsTable(
-              item["itemName"],
               return_id,
               0, //item["qty"]
               double.parse(item["rate"]),
+              item["unit_rate"],
               item["code"],
+              item["hsn"],
               date,
               time,
               os,
               customer_id,
+              "",
+              billNo,
               user_id,
               aid,
               0,
+              "",
+              "",
               item["unit_name"],
               rowNum,
               "returnDetailTable",
-              total_price,
-              "",
-              "",
-              0.0,
-              item["baserate"],
-              item["package"],
-              branch_id,
-              item["hsn"],
-              billNo,
-              0,
-              "",
-              "",
+              item["itemName"],
               gross,
               item["discount_amt"],
               item["discount_per"],
@@ -2800,41 +2797,92 @@ class Controller extends ChangeNotifier {
               0.0,
               0.0,
               0.0,
+              item["net_amt"],
               0.0,
               item["net_amt"],
               roundoff,
               0,
+              0,
+              0.0,
+              item["baserate"],
+              item["package"],
+              branch_id,
+              "",
+              "",
               item["qty"]);
         } else {
-            print("not damageed");
+          print("not damageed");
+          // await OrderAppDB.instance.insertreturnMasterandDetailsTable(
+          //     item["itemName"],
+          //     return_id,
+          //     item["qty"],
+          //     double.parse(item["rate"]),
+          //     item["code"],
+          //     date,
+          //     time,
+          //     os,
+          //     customer_id,
+          //     user_id,
+          //     aid,
+          //     0,
+          //     item["unit_name"],
+          //     rowNum,
+          //     "returnDetailTable",
+          //     total_price,
+          //     "",
+          //     "",
+          //     0.0,
+          //     item["baserate"],
+          //     item["package"],
+          //     branch_id,
+          //     item["hsn"],
+          //     billNo,
+          //     0,
+          //     "",
+          //     "",
+          //     gross,
+          //     item["discount_amt"],
+          //     item["discount_per"],
+          //     item["tax_amt"],
+          //     item["tax_per"],
+          //     item["cgst_per"],
+          //     item["cgst_amt"],
+          //     item["sgst_per"],
+          //     item["sgst_amt"],
+          //     item["igst_per"],
+          //     item["igst_amt"],
+          //     item["ces_amt"],
+          //     item["ces_per"],
+          //     0.0,
+          //     0.0,
+          //     0.0,
+          //     0.0,
+          //     item["net_amt"],
+          //     roundoff,
+          //     0,
+          //     0);
           await OrderAppDB.instance.insertreturnMasterandDetailsTable(
-              item["itemName"],
               return_id,
               item["qty"],
               double.parse(item["rate"]),
+              item["unit_rate"],
               item["code"],
+              item["hsn"],
               date,
               time,
               os,
               customer_id,
+              "",
+              billNo,
               user_id,
               aid,
               0,
+              "",
+              "",
               item["unit_name"],
               rowNum,
               "returnDetailTable",
-              total_price,
-              "",
-              "",
-              0.0,
-              item["baserate"],
-              item["package"],
-              branch_id,
-              item["hsn"],
-              billNo,
-              0,
-              "",
-              "",
+              item["itemName"],
               gross,
               item["discount_amt"],
               item["discount_per"],
@@ -2851,10 +2899,18 @@ class Controller extends ChangeNotifier {
               0.0,
               0.0,
               0.0,
+              item["net_amt"],
               0.0,
               item["net_amt"],
               roundoff,
               0,
+              0,
+              0.0,
+              item["baserate"],
+              item["package"],
+              branch_id,
+              "",
+              "",
               0);
         }
 
@@ -4861,6 +4917,137 @@ class Controller extends ChangeNotifier {
 
                 await generateSalesInvoice(context);
                 // CustomSnackbar snk=CustomSnackbar();
+
+                isUpload = false;
+                if (page == "upload page") {
+                  isUp[index] = true;
+                }
+                isLoading = false;
+                notifyListeners();
+              } else {
+                isUpload = false;
+                if (page == "upload page") {
+                  isUp[index!] = true;
+                }
+                isLoading = false;
+                notifyListeners();
+                snackbar.showSnackbar(context, "Upload Failed..", "");
+              }
+            }
+          }
+        }
+      } else {
+        isUp[index!] = false;
+        notifyListeners();
+        snackbar.showSnackbar(context, "Nothing to upload!!!", "");
+      }
+      notifyListeners();
+    } else {
+      isLoading = false;
+      notifyListeners();
+      CustomSnackbar snackbar = CustomSnackbar();
+      snackbar.showSnackbar(
+          context, "Error Connecting Database,failed to upload sales", "");
+      print("NOT connected 2nd");
+    }
+  }
+///////////////////////////////////////////////////////////////////////////////////////
+
+  uploadSalesReturnDatasql(
+      String cid, BuildContext context, int index, String page) async {
+    int con = await initSecondaryDb(context);
+    if (con == 1) {
+      int f = 0;
+      List<Map<String, dynamic>> resultQuery = [];
+      Map<String, dynamic> omDet = {};
+      Map<String, dynamic> ommastr = {};
+      String ommastrString = "";
+      String omDetString = "";
+      int itemrid;
+      String itembillno;
+      notifyListeners();
+      var result = await OrderAppDB.instance.selectSaleReturnMasterTable();
+      String jsonE = jsonEncode(result);
+      var jsonMstr = jsonDecode(jsonE);
+      if (result.isNotEmpty) {
+        isUpload = false;
+        isLoading = true;
+        isUp[index] = true;
+        notifyListeners();
+        for (var item in jsonMstr) {
+          var result = await OrderAppDB.instance
+              .selectSalesReturnMasterTableByID(item["r_id"]);
+          String jsonE = jsonEncode(result);
+          var jsonDe = jsonDecode(jsonE);
+          for (var item in jsonDe) {
+            ommastr = item;
+            print("O Master---$ommastr");
+            itembillno = item["billno"];
+            itemrid = item["r_id"];
+            DateTime now = DateTime.now();
+            DateFormat formatter = DateFormat('dd-MMM-yyyy');
+            String dateNow = formatter.format(now);
+            String dateTimeString = ommastr['rdate'];
+            DateTime parsedDate = DateTime.parse(dateTimeString);
+            String formattedDate = DateFormat('dd-MMM-yyyy').format(parsedDate);
+            ommastrString =
+                "(${ommastr['r_id']},'$formattedDate','${ommastr['rtime']}','${ommastr['series']}','${ommastr['cuid']}','${ommastr['staff_id']}',${ommastr['aid']},'${ommastr['billno']}',${ommastr['total_qty']},'${ommastr['p_mode']}',0,'${ommastr['gross_tot']}','${ommastr['dis_tot']}','${ommastr['tax_tot']}','${ommastr['ces_tot']}','${ommastr['rounding']}','${ommastr['net_amt']}',${ommastr['state_status']},${ommastr['brid']},${ommastr['statusid']},'${ommastr['reason']}','${ommastr['reference_no']}','${ommastr['total_price']}',${ommastr['rflag']})";
+            print("Master string= $ommastrString");
+            omDetString = "";
+            resultQuery = await OrderAppDB.instance
+                .selectSalesReturnDetailTable(item["r_id"]);
+            String jsonE = jsonEncode(resultQuery);
+            var jsonDe = jsonDecode(jsonE);
+            int rowno = 1;
+            if (resultQuery.isNotEmpty) {
+              for (var item in jsonDe) {
+                print("rowno = $rowno");
+                omDet = item;
+                // print("O Detail---$omDet");
+                String omtemp =
+                    "($itemrid,$rowno,'${omDet['code']}',${omDet['qty']},'${omDet['unit']}',${omDet['rate']},${omDet['rate']},${omDet['gross']},${omDet['disc_amt']},${omDet['disc_per']},${omDet['tax_amt']},${omDet['tax_per']},${omDet['cgst_per']},${omDet['cgst_amt']},${omDet['sgst_per']},${omDet['sgst_amt']},${omDet['igst_per']},${omDet['igst_amt']},${omDet['ces_amt']},${omDet['ces_per']},${omDet['net_amt']},${omDet['qty_damage']})";
+                if (omDetString.isEmpty) {
+                  omDetString = omtemp;
+                } else {
+                  omDetString = '$omDetString,$omtemp';
+                }
+                rowno++;
+                print("O Detail String---$omDetString");
+              }
+
+              // ///Code to upload
+              var res2 = await SqlConn.writeData(
+                  "DELETE from [salereturn_master] WHERE [return_id]=$itemrid");
+              var res22 = await SqlConn.writeData(
+                  "DELETE from  [salereturn_details] WHERE [ret_id]='$itemrid'");
+              print("delete result---$res2 , $res22");
+              print("master=== $ommastrString");
+              // print("master===     ${"INSERT INTO [salereturn_master]([return_id],[return_date],[return_time],[series],[customerid],[userid],[areaid],[billno],[total_qty],[payment_mode],[credit_option],[gross_tot],[dis_tot],[tax_tot],[ces_tot],[rounding],[net_amt],[state_status],[branch_id],[statusid],[reason],[reference_no],[total_price],[rflag]) VALUES(${ommastr['r_id']},'$formattedDate','${ommastr['rtime']}','${ommastr['series']}','${ommastr['cuid']}','${ommastr['staff_id']}',${ommastr['aid']},'${ommastr['billno']}',${ommastr['total_qty']},${ommastr['p_mode']},0,'${ommastr['gross_tot']}','${ommastr['dis_tot']}','${ommastr['tax_tot']}','${ommastr['ces_tot']}','${ommastr['rounding']}','${ommastr['net_amt']}',${ommastr['state_status']},${ommastr['brid']},${ommastr['statusid']},'${ommastr['reason']}','${ommastr['reference_no']}','${ommastr['total_price']}',${ommastr['rflag']})"}");
+              // var res = await SqlConn.writeData("INSERT INTO [salereturn_master]([return_id],[return_date],[return_time],[series],[customerid],[userid],[areaid],[billno],[total_qty],[payment_mode],[credit_option],[gross_tot],[dis_tot],[tax_tot],[ces_tot],[rounding],[net_amt],[state_status],[branch_id],[statusid],[reason],[reference_no],[total_price],[rflag]) VALUES(${ommastr['r_id']},'$formattedDate','${ommastr['rtime']}','${ommastr['series']}','${ommastr['cuid']}','${ommastr['staff_id']}',${ommastr['aid']},'${ommastr['billno']}',${ommastr['total_qty']},${ommastr['p_mode']},0,'${ommastr['gross_tot']}','${ommastr['dis_tot']}','${ommastr['tax_tot']}','${ommastr['ces_tot']}','${ommastr['rounding']}','${ommastr['net_amt']}',${ommastr['state_status']},${ommastr['brid']},${ommastr['statusid']},'${ommastr['reason']}','${ommastr['reference_no']}','${ommastr['total_price']}',${ommastr['rflag']})");
+              var res = await SqlConn.writeData(
+                  "INSERT INTO [salereturn_master]([return_id],[return_date],[return_time],[series],[customerid],[userid],[areaid],[billno],[total_qty],[payment_mode],[credit_option],[gross_tot],[dis_tot],[tax_tot],[ces_tot],[rounding],[net_amt],[state_status],[branch_id],[statusid],[reason],[reference_no],[total_price],[rflag]) VALUES $ommastrString");
+
+              // ommastrString
+              var resdet = await SqlConn.writeData(
+                  "INSERT INTO [salereturn_details]([ret_id],[row_no],[Code],[Qty],[unit],[rate],[baserate],[grossamt],[discamt],[discper],[taxamt],[taxper],[cgstper],[cgstamt],[sgstper],[sgstamt],[igstper],[igstamt],[cessamt],[cessper],[net_amt],[qty_damage]) VALUES $omDetString");
+              f = 1;
+              // print("qryres-----$f---$res");
+              print("qryrespo-----$f------$res");
+              var res1 =
+                  await SqlConn.readData("SELECT * from [salereturn_master]");
+              print("sales mastr res---$res1");
+              var res111 =
+                  await SqlConn.readData("SELECT * from [salereturn_details]");
+              print("sales details res---$res111");
+              isUpload = false;
+              if (page == "upload page") {
+                isUp[index!] = true;
+              }
+              if (f == 1) 
+              {
+                await OrderAppDB.instance.upadteCommonQuery("returnMasterTable",
+                    "status = 1", "return_id='${itemrid}'");
+                //   await generateSalesInvoice(context);
 
                 isUpload = false;
                 if (page == "upload page") {

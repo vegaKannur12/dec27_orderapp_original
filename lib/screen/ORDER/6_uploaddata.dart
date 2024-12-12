@@ -20,6 +20,7 @@ class _UploaddataState extends State<Uploaddata> {
     "Upload Sales",
     // "Upload Customer",
     // "Upload Stock Return",
+    "Upload Sales Return",
     "Upload Collection"
     // "Upload Stock"
     // "Upload Remarks"
@@ -119,6 +120,17 @@ class _UploaddataState extends State<Uploaddata> {
                                                         index,
                                                         "upload page");
                                               }
+                                              if (uploadItems[index] ==
+                                                  "Upload Sales Return") {
+                                                Provider.of<Controller>(context,
+                                                        listen: false)
+                                                    .uploadSalesReturnDatasql(
+                                                        widget.cid,
+                                                        context,
+                                                        index,
+                                                        "upload page");
+                                              }
+                                              
                                               // if (uploadItems[index] ==
                                               //     "Upload Customer") {
                                               //   Provider.of<Controller>(context,

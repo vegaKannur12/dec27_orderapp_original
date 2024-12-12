@@ -148,7 +148,7 @@ class CommonPopup {
                               ref,
                               reason,
                               context, 
-                              branch_id);
+                              branch_id,payment_mode);
                       Provider.of<Controller>(context, listen: false)
                           .returnCount = 0;
                      

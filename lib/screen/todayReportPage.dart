@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:sqlorder24/components/commoncolor.dart';
 import 'package:sqlorder24/controller/controller.dart';
-
 import 'package:sqlorder24/screen/filter_Report.dart';
-
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -22,8 +20,7 @@ class _ReportPageState extends State<ReportPage> {
   List<String> s = [];
   String? formattedDate;
   String? sid;
-
-
+  
   final formKey = GlobalKey<FormState>();
   final TextEditingController searchController = TextEditingController();
   // Filter filter = Filter();

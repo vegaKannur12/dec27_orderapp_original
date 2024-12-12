@@ -1206,33 +1206,27 @@ class OrderAppDB {
 
   ////////////////////insert to return table/////////////////////////////////
   Future insertreturnMasterandDetailsTable(
-      String item,
       int return_id,
       double qty,
       double rate,
+      double unit_rate,
       String? code,
+      String hsn,
       String return_date,
       String return_time,
       String os,
       String customerid,
+      String cus_type,
+      String bill_no,
       String userid,
       String areaid,
-      int status,
-      String? unit,
-      int rowNum,
-      String table,
-      double total_price,
-      String reason,
-      String refNo,
-      double? unit_value,
-      double? base_rate,
-      double? packing,
-      String? branch_id,
-      String hsn,
-      String bill_no,
       int total_qty,
       String payment_mode,
       String credit_option,
+      String? unit,
+      int rowNum,
+      String table,
+      String item,
       double gross_amount,
       double dis_amt,
       double dis_per,
@@ -1251,8 +1245,16 @@ class OrderAppDB {
       double tax_tot,
       double ces_tot,
       double net_amt,
+      double total_price,
       double rounding,
-      int state_status,
+      int state_status,     
+      int status,
+      double? unit_value,
+      double? base_rate,
+      double? packing,
+      String? branch_id,    
+      String reason,
+      String refNo,
       double dmgqty) async {
     final db = await database;
     var res2;
@@ -2268,10 +2270,10 @@ class OrderAppDB {
     Database db = await instance.database;
     var unitquery = "";
     unitquery = "SELECT p.pid as pid,p.code code,p.item item, p.unit unit, 1 pkg ,p.companyId companyId,p.hsn hsn, " +
-        "p.tax tax,p.prate prate,p.mrp mrp,p.cost cost,p.rate1 rate1, " +
+        "p.tax tax,p.prate prate,p.mrp mrp,p.cost cost,p.rate1 rate1,p.rate2 rate2, " +
         "p.categoryId  categoryId from 'productDetailsTable' p where p.code= '$prod_code' union all " +
         "SELECT pd.pid,pd.code,pd.item,u.unit_name unit,u.package pkg,pd.companyId,pd.hsn, " +
-        "pd.tax,pd.prate,pd.mrp,pd.cost,pd.rate1 , pd.categoryId  from 'productDetailsTable' pd " +
+        "pd.tax,pd.prate,pd.mrp,pd.cost,pd.rate1 ,pd.rate2, pd.categoryId  from 'productDetailsTable' pd " +
         "inner  join 'productUnits' u  ON u.pid = pd.pid where pd.code= '$prod_code' order by pkg";
 
     // unitquery = "SELECT p.pid prid,p.code prcode,p.item pritem, p.unit prunit, 1 pkg ,p.companyId prcid,p.hsn prhsn, " +
@@ -2957,6 +2959,8 @@ class OrderAppDB {
     print("result sales upload----$result");
     return result;
   }
+ ///////////////////////////////////////////////////////
+ 
 
   selectSalesMasterTableByID(int sidd) async {
     Database db = await instance.database;
@@ -2998,6 +3002,103 @@ class OrderAppDB {
   }
 
   ////////////////////////////////////////////////////////
+  ///
+   selectSaleReturnMasterTable() async {
+    Database db = await instance.database;
+    var result;
+
+    String query2 = "";
+    // String query1 = "";
+    query2 = query2 +
+        " SELECT " +
+        " returnMasterTable.return_id as r_id," +    //returnMasterTable
+        " returnMasterTable.bill_no as billno," +
+        " returnMasterTable.customerid cuid," +
+        " returnMasterTable.return_date rdate," +  
+        " returnMasterTable.return_time rtime," + 
+        " returnMasterTable.userid as staff_id," +
+        " returnMasterTable.areaid as aid ," +
+        // " returnMasterTable.cus_type as cus_type," +
+        " returnMasterTable.gross_tot as gross_tot," +
+        " returnMasterTable.dis_tot as dis_tot," +
+        " returnMasterTable.ces_tot as ces_tot," +
+        " returnMasterTable.tax_tot as tax_tot," +
+        " returnMasterTable.payment_mode as p_mode," +
+        " returnMasterTable.credit_option as c_option," +
+        " returnMasterTable.rounding as rounding," +
+        " returnMasterTable.net_amt as net_amt," +
+        " returnMasterTable.reference_no as reference_no," +
+        " returnMasterTable.reason as reason," +
+        // " returnMasterTable.cancel as cancel_flag, " +
+        // " returnMasterTable.cancel_staff as cancel_staff, " +
+        // " returnMasterTable.cancel_dateTime as cancel_time," +
+        "returnMasterTable.brrid || ' ' as brid," +
+
+        " returnMasterTable.os as series ," +
+        " returnMasterTable.total_qty as total_qty ," +
+        " returnMasterTable.state_status as state_status ," +
+        " returnMasterTable.status as statusid ," +
+        " returnMasterTable.total_price as total_price ," +
+        " returnMasterTable.rflag as rflag " +
+        " FROM returnMasterTable where returnMasterTable.status=0 ;";
+    var res = await db.rawQuery("SELECT  * FROM  returnMasterTable");
+    print("query2----$query2");
+    if (res.length > 0) {
+      result = await db.rawQuery(query2);
+    }
+    print("result return upload----$result");
+    return result;
+  }
+  selectSalesReturnMasterTableByID(int ridd) async {
+    Database db = await instance.database;
+    var result;
+
+    String query2 = "";
+    // String query1 = "";
+    query2 = query2 +
+        " SELECT " +
+        " returnMasterTable.return_id as r_id," +
+        " returnMasterTable.bill_no as billno," +
+        " returnMasterTable.customerid cuid," +
+        " returnMasterTable.return_date rdate," +
+        " returnMasterTable.return_time rtime," +
+        // || ' '  ||salesMasterTable.salestime sdate, " +
+        " returnMasterTable.userid as staff_id," +
+        " returnMasterTable.areaid as aid ," +
+        // " returnMasterTable.cus_type as cus_type," +
+        " returnMasterTable.gross_tot as gross_tot," +
+        " returnMasterTable.dis_tot as dis_tot," +
+        " returnMasterTable.ces_tot as ces_tot," +
+        " returnMasterTable.tax_tot as tax_tot," +
+        " returnMasterTable.payment_mode as p_mode," +
+        " returnMasterTable.credit_option as c_option," +
+        " returnMasterTable.rounding as rounding," +
+        " returnMasterTable.net_amt as net_amt," +
+        " returnMasterTable.reference_no as reference_no," +
+        " returnMasterTable.reason as reason," +
+        // " returnMasterTable.cancel as cancel_flag, " +
+        // " returnMasterTable.cancel_staff as cancel_staff, " +
+        // " returnMasterTable.cancel_dateTime as cancel_time," +
+        // " returnMasterTable.cashdisc_per as cashdisc_per," +
+        // " returnMasterTable.cashdisc_amt as cashdisc_amt," +
+        "returnMasterTable.brrid || ' ' as brid," +
+        
+        " returnMasterTable.os as series ," +
+        " returnMasterTable.total_qty as total_qty ," +
+        " returnMasterTable.state_status as state_status ," +
+        " returnMasterTable.status as statusid ," +
+        " returnMasterTable.total_price as total_price ," +
+        " returnMasterTable.rflag as rflag " +
+            " FROM returnMasterTable where returnMasterTable.return_id=$ridd ;";
+    var res = await db.rawQuery("SELECT  * FROM  returnMasterTable");
+    print("by rid----$query2");
+    if (res.length > 0) {
+      result = await db.rawQuery(query2);
+    }
+    print("by rid result return upload----$result");
+    return result;
+  }
+  //////////////////////////////////////////////////////////////
   selectReturnMasterTable() async {
     Database db = await instance.database;
 
@@ -3060,7 +3161,33 @@ class OrderAppDB {
     print("sales detailss------$result");
     return result;
   }
+//////////////////////////////////////////////////////////
+  selectSalesReturnDetailTable(int ret_id) async {
+    print("return id----$ret_id");
+    Database db = await instance.database; 
+    var query2 = "";
+    query2 = query2 +
+        "SELECT returnDetailTable.code as code,returnDetailTable.hsn as hsn," +
+        " returnDetailTable.item as item, returnDetailTable.qty as qty," +
+        " returnDetailTable.rate as rate,returnDetailTable.unit as unit," +
+        " returnDetailTable.packing as packing, " +
+        // " returnDetailTable.unit_rate as unit_rate, " +
+        " returnDetailTable.gross_amount as gross," +
+        " returnDetailTable.dis_per as disc_per,returnDetailTable.dis_amt as disc_amt," +
+        " returnDetailTable.cgst_per as cgst_per,returnDetailTable.cgst_amt as cgst_amt," +
+        " returnDetailTable.sgst_per as sgst_per,returnDetailTable.sgst_amt as sgst_amt," +
+        " returnDetailTable.igst_per as igst_per,returnDetailTable.igst_amt as igst_amt," +
+        " returnDetailTable.tax_per as tax_per,returnDetailTable.tax_amt as tax_amt," +
+        " returnDetailTable.ces_per as ces_per,returnDetailTable.ces_amt as ces_amt," +
+        " returnDetailTable.net_amt as net_amt," +
+        " returnDetailTable.qtydmg as qty_damage" +
+        " from returnDetailTable  where  returnDetailTable.return_id=${ret_id};";
 
+    var result = await db.rawQuery(query2);
+    //     "SELECT salesDetailTable.code as code,salesDetailTable.item_name as item, salesDetailTable.qty as qty, salesDetailTable.rate as rate,salesDetailTable.gross_amount as gross,salesDetailTable.dis_per as disc_per,salesDetailTable.dis_amt as disc_amt,salesDetailTable.tax_per as tax_per,salesDetailTable.tax_amt as tax_amt,salesDetailTable.ces_per as ces_per,salesDetailTable.ces_amt as ces_amt,salesDetailTable.ces_amt as ces_amt,salesDetailTable.ces_amt as ces_amt,salesDetailTable.ces_amt as ces_amt,salesDetailTable.ces_amt as ces_amt,salesDetailTable.net_amt as net_amt  from salesDetailTable  where  salesDetailTable.sales_id=${sales_id}");
+    print("return detailss------$result");
+    return result;
+  }
 ///////////////////////////////////////////////////////////////////////
   selectReturnDetailTable(int return_id) async {
     Database db = await instance.database;
