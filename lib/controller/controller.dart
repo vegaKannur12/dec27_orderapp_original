@@ -5043,8 +5043,7 @@ class Controller extends ChangeNotifier {
               if (page == "upload page") {
                 isUp[index!] = true;
               }
-              if (f == 1) 
-              {
+              if (f == 1) {
                 await OrderAppDB.instance.upadteCommonQuery("returnMasterTable",
                     "status = 1", "return_id='${itemrid}'");
                 //   await generateSalesInvoice(context);
@@ -6428,18 +6427,31 @@ class Controller extends ChangeNotifier {
   }
 
 ///////////////////////////////////////////////////////////////////
-  setUnitSale_X001(String selected, int index) {
+  setUnitSale_X001(String selected, int index, int rateid) {
+    print("rate ID --- = $rateid");
     double? calculatedRate;
     selectedunit_X001 = selected;
 
     for (int i = 0; i < salesitemListdata2.length; i++) {
       if (salesitemListdata2[i]["unit"] == selectedunit_X001) {
-        print(
-            "selected---${salesitemListdata2[i]["pkg"]}-----${salesitemListdata2[i]["rate1"]}");
         package = salesitemListdata2[i]["pkg"].toDouble();
-        calculatedRate = salesitemListdata2[i]["pkg"] *
-            double.parse(salesitemListdata2[i]["rate1"]);
-
+        if (rateid == 5) {
+          print(
+              "selected- rateid= $rateid--${salesitemListdata2[i]["pkg"]}-----${salesitemListdata2[i]["rate1"]}");
+          calculatedRate = salesitemListdata2[i]["pkg"] *
+              double.parse(salesitemListdata2[i]["rate1"]);
+        } else if (rateid == 6) {
+          print(
+              "selected- rateid= $rateid--${salesitemListdata2[i]["pkg"]}-----${salesitemListdata2[i]["rate2"]}");
+          calculatedRate = salesitemListdata2[i]["pkg"] *
+              double.parse(salesitemListdata2[i]["rate2"]);
+        }
+        else if (rateid == 7) {
+          print(
+              "selected- rateid= $rateid--${salesitemListdata2[i]["pkg"]}-----${salesitemListdata2[i]["rate3"]}");
+          calculatedRate = salesitemListdata2[i]["pkg"] *
+              double.parse(salesitemListdata2[i]["rate3"]);
+        }
         salesrate_X001[index].text = calculatedRate.toString();
 
         notifyListeners();

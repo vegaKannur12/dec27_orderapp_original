@@ -39,7 +39,7 @@ class _OrderFormState extends State<OrderForm> with TickerProviderStateMixin {
   bool balVisible = false;
   String? areaName;
   String? cstmId;
-
+  int? customerRateID;
   String? customerName;
   String? _selectedItemarea;
   bool customerValidation = false;
@@ -325,8 +325,7 @@ class _OrderFormState extends State<OrderForm> with TickerProviderStateMixin {
                                             (Map<String, dynamic> option) =>
                                                 option["aname"],
                                         onSelected: (value) {
-                                          setState(()  
-                                          {
+                                          setState(() {
                                             _selectedItemarea = value["aname"];
                                             areaName = value["aname"];
                                             print("areaName...$areaName");
@@ -355,8 +354,7 @@ class _OrderFormState extends State<OrderForm> with TickerProviderStateMixin {
                                                 .areaId = _selectedAreaId;
                                             customertext.text = '';
 
-                                             Provider.of<Controller>(
-                                                    context,
+                                            Provider.of<Controller>(context,
                                                     listen: false)
                                                 .getCustomer(
                                                     _selectedAreaId, context);
@@ -572,8 +570,11 @@ class _OrderFormState extends State<OrderForm> with TickerProviderStateMixin {
                                                 customerName = value["hname"]
                                                     .toUpperCase();
                                                 custmerId = value["ac_code"];
+                                                customerRateID = value["ri"];
                                                 print(
                                                     "Code .........---$custmerId");
+                                                print(
+                                                    "Cus ri .........---$customerRateID");
                                                 Provider.of<Controller>(context,
                                                             listen: false)
                                                         .customer_Name =
@@ -963,9 +964,15 @@ class _OrderFormState extends State<OrderForm> with TickerProviderStateMixin {
                                                           //         custmerId
                                                           //             .toString(),
                                                           //         "orderform");
-
+                                                           List customerDet = await OrderAppDB
+                                                                      .instance
+                                                                      .selectAllcommon(
+                                                                          'accountHeadsTable',
+                                                                          "ac_code='$custmerId'");
+                                                                  print(
+                                                                      "customerDet------$customerDet");
                                                           String os =
-                                                          //  "R"
+                                                              //  "R"
                                                               "${values.ordernum[0]["os"]}";
                                                           Provider.of<Controller>(
                                                                   context,
@@ -976,14 +983,13 @@ class _OrderFormState extends State<OrderForm> with TickerProviderStateMixin {
                                                             custmerId
                                                                 .toString(),
                                                           );
-                                                           Provider.of<Controller>(
-                                                                          context,
-                                                                          listen:
-                                                                              false)
-                                                                      .fromSalesbagTable_X001(
-                                                                          custmerId
-                                                                              .toString(),
-                                                                          "return");
+                                                          Provider.of<Controller>(
+                                                                  context,
+                                                                  listen: false)
+                                                              .fromSalesbagTable_X001(
+                                                                  custmerId
+                                                                      .toString(),
+                                                                  "return");
                                                           Provider.of<Controller>(
                                                                   context,
                                                                   listen: false)
@@ -997,30 +1003,37 @@ class _OrderFormState extends State<OrderForm> with TickerProviderStateMixin {
                                                                   context,
                                                                   listen: false)
                                                               .returnfilterCompany = false;
-                                                             Navigator.of(
-                                                                          context)
-                                                                      .push(
-                                                                    PageRouteBuilder(
-                                                                      opaque:
-                                                                          false, // set to false
-                                                                      pageBuilder: (_, __, ___) => ReturnItem2(
-                                                                          customerId: custmerId
-                                                                              .toString(),
-                                                                          areaId: values.areaidFrompopup == null || values.areaidFrompopup!.isEmpty
-                                                                              ? Provider.of<Controller>(context, listen: false).areaAutoComplete[
-                                                                                  0]
-                                                                              : Provider.of<Controller>(context, listen: false)
-                                                                                  .areaidFrompopup!,
-                                                                          os:
-                                                                              os,
-                                                                          areaName: values.areaidFrompopup == null || values.areaidFrompopup!.isEmpty
-                                                                              ? Provider.of<Controller>(context, listen: false).areaAutoComplete[1]
-                                                                              : Provider.of<Controller>(context, listen: false).areaSelecton!,
-                                                                          type:"return",
-                                                                          gtype: "return",
-                                                                          branch_id: branch_id.toString()),
-                                                                    ),
-                                                                  );  
+                                                          Navigator.of(context)
+                                                              .push(
+                                                            PageRouteBuilder(
+                                                              opaque:
+                                                                  false, // set to false
+                                                              pageBuilder: (_, __, ___) => ReturnItem2(
+                                                                  customerId:
+                                                                      custmerId
+                                                                          .toString(),
+                                                                  areaId: values.areaidFrompopup == null ||
+                                                                          values
+                                                                              .areaidFrompopup!
+                                                                              .isEmpty
+                                                                      ? Provider.of<Controller>(context, listen: false).areaAutoComplete[
+                                                                          0]
+                                                                      : Provider.of<Controller>(context, listen: false)
+                                                                          .areaidFrompopup!,
+                                                                  os: os,
+                                                                  areaName: values.areaidFrompopup == null ||
+                                                                          values
+                                                                              .areaidFrompopup!
+                                                                              .isEmpty
+                                                                      ? Provider.of<Controller>(context, listen: false).areaAutoComplete[1]
+                                                                      : Provider.of<Controller>(context, listen: false).areaSelecton!,
+                                                                  type: "return",
+                                                                  gtype: "return",
+                                                                  branch_id: branch_id.toString(),
+                                                                  cusrateid:
+                                                                            int.parse(customerDet[0]["ri"].toString())),
+                                                            ),
+                                                          );
                                                           // Navigator.of(context)
                                                           //     .push(
                                                           //   PageRouteBuilder(
@@ -1323,22 +1336,31 @@ class _OrderFormState extends State<OrderForm> with TickerProviderStateMixin {
                                                                     PageRouteBuilder(
                                                                       opaque:
                                                                           false, // set to false
-                                                                      pageBuilder: (_, __, ___) => SalesItem(
-                                                                          customerId: custmerId
-                                                                              .toString(),
-                                                                          areaId: values.areaidFrompopup == null || values.areaidFrompopup!.isEmpty
-                                                                              ? Provider.of<Controller>(context, listen: false).areaAutoComplete[
-                                                                                  0]
-                                                                              : Provider.of<Controller>(context, listen: false)
-                                                                                  .areaidFrompopup!,
-                                                                          os:
-                                                                              os,
-                                                                          areaName: values.areaidFrompopup == null || values.areaidFrompopup!.isEmpty
-                                                                              ? Provider.of<Controller>(context, listen: false).areaAutoComplete[1]
-                                                                              : Provider.of<Controller>(context, listen: false).areaSelecton!,
-                                                                          type: "sale",
-                                                                          gtype: customerDet[0]["gtype"],
-                                                                          branch_id: branch_id.toString()),
+                                                                      pageBuilder: (_,
+                                                                              __,
+                                                                              ___) =>
+                                                                          SalesItem(
+                                                                        customerId:
+                                                                            custmerId.toString(),
+                                                                        areaId: values.areaidFrompopup == null ||
+                                                                                values.areaidFrompopup!.isEmpty
+                                                                            ? Provider.of<Controller>(context, listen: false).areaAutoComplete[0]
+                                                                            : Provider.of<Controller>(context, listen: false).areaidFrompopup!,
+                                                                        os: os,
+                                                                        areaName: values.areaidFrompopup == null ||
+                                                                                values.areaidFrompopup!.isEmpty
+                                                                            ? Provider.of<Controller>(context, listen: false).areaAutoComplete[1]
+                                                                            : Provider.of<Controller>(context, listen: false).areaSelecton!,
+                                                                        type:
+                                                                            "sale",
+                                                                        gtype: customerDet[0]
+                                                                            [
+                                                                            "gtype"],
+                                                                        branch_id:
+                                                                            branch_id.toString(),
+                                                                        cusrateid:
+                                                                            int.parse(customerDet[0]["ri"].toString()),
+                                                                      ),
                                                                     ),
                                                                   );
                                                                 }

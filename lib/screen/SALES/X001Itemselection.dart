@@ -31,6 +31,7 @@ class SalesItem extends StatefulWidget {
   bool _isLoading = false;
   String gtype;
   String branch_id;
+  int cusrateid;
 
   SalesItem(
       {required this.customerId,
@@ -39,7 +40,8 @@ class SalesItem extends StatefulWidget {
       required this.areaName,
       required this.type,
       required this.gtype,
-      required this.branch_id});
+      required this.branch_id,
+      required this.cusrateid});
 
   @override
   State<SalesItem> createState() => _SalesItemState();
@@ -78,7 +80,8 @@ class _SalesItemState extends State<SalesItem> {
     // TODO: implement initState
     super.initState();
 
-    print("customer id....os....${widget.customerId}--${widget.os}");
+    print(
+        "customer id....os...rateid .....${widget.customerId}--${widget.os} , ${widget.cusrateid}");
     products = Provider.of<Controller>(context, listen: false).productName;
     print("products---${products}");
     Provider.of<Controller>(context, listen: false).selectSettings(
@@ -527,7 +530,7 @@ class _SalesItemState extends State<SalesItem> {
                                             Provider.of<Controller>(context,
                                                     listen: false)
                                                 .setUnitSale_X001(
-                                                    value.frstDropDown!, index);
+                                                    value.frstDropDown!, index,widget.cusrateid);
                                             value.selectedItem =
                                                 value.frstDropDown;
 
@@ -587,7 +590,8 @@ class _SalesItemState extends State<SalesItem> {
                                                 s[1],
                                                 widget.branch_id,
                                                 value.newList[index]
-                                                    ["ActStock"],"sales");
+                                                    ["ActStock"],
+                                                "sales",widget.cusrateid);
                                           }
                                         },
                                         dense: true,
@@ -705,7 +709,7 @@ class _SalesItemState extends State<SalesItem> {
                                     Provider.of<Controller>(context,
                                             listen: false)
                                         .setUnitSale_X001(
-                                            value.frstDropDown!, index);
+                                            value.frstDropDown!, index,widget.cusrateid);
                                     value.selectedItem = value.frstDropDown;
 
                                     value.salesqty_X001[index].text = "1.0";
@@ -752,8 +756,8 @@ class _SalesItemState extends State<SalesItem> {
                                         s[0],
                                         s[1],
                                         widget.branch_id,
-                                        value.salesitemList2[index]
-                                            ["ActStock"],"sales");
+                                        value.salesitemList2[index]["ActStock"],
+                                        "sales",widget.cusrateid);
                                   }
                                 },
                                 // dense: true,

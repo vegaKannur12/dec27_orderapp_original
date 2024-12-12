@@ -32,7 +32,8 @@ class CoconutSheet {
       String time,
       String branch_id,
       double actstock,
-      String frompage) {
+      String frompage,
+      int cusrateid) {
     print(
         "settti----${Provider.of<Controller>(context, listen: false).settingsList1}");
     return showModalBottomSheet(
@@ -128,7 +129,7 @@ class CoconutSheet {
                                       // Spacer(),
                                       value.prNullvalue
                                           ? Container()
-                                          : dropDownUnit(size, index, tax_per),
+                                          : dropDownUnit(size, index, tax_per,cusrateid),
                                     ],
                                   ),
                                 ),
@@ -1237,7 +1238,7 @@ class CoconutSheet {
   }
 
   //////////////////
-  Widget dropDownUnit(Size size, int index, double tax_per) {
+  Widget dropDownUnit(Size size, int index, double tax_per,int cusrateid) {
     double qty;
     return Consumer<Controller>(
       builder: (context, value, child) {
@@ -1291,7 +1292,7 @@ class CoconutSheet {
                 print("clicked");
                 if (item != null) {
                   value.selectedItem = item;
-                  value.setUnitSale_X001(value.selectedItem!, index);
+                  value.setUnitSale_X001(value.selectedItem!, index,cusrateid);
                   if (value.salesqty_X001[index].text == null ||
                       value.salesqty_X001[index].text.isEmpty) {
                     qty = 1;

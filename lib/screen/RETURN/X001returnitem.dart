@@ -31,6 +31,7 @@ class ReturnItem2 extends StatefulWidget {
   bool _isLoading = false;
   String gtype;
   String branch_id;
+  int cusrateid;
 
   ReturnItem2(
       {required this.customerId,
@@ -39,7 +40,8 @@ class ReturnItem2 extends StatefulWidget {
       required this.areaName,
       required this.type,
       required this.gtype,
-      required this.branch_id});
+      required this.branch_id,
+      required this.cusrateid});
 
   @override
   State<ReturnItem2> createState() => _ReturnItem2State();
@@ -78,7 +80,7 @@ class _ReturnItem2State extends State<ReturnItem2> {
     // TODO: implement initState
     super.initState();
 
-    print("customer id....os....${widget.customerId}--${widget.os}");
+    print("customer id....os...rate..${widget.customerId}--${widget.os}, ${widget.cusrateid}");
     products = Provider.of<Controller>(context, listen: false).productName;
     print("products---${products}");
     Provider.of<Controller>(context, listen: false).selectSettings(
@@ -534,8 +536,8 @@ class _ReturnItem2State extends State<ReturnItem2> {
                                                 .text = "0.0";
                                             value.discount_amount_X001[index]
                                                 .text = "0.0";
-                                            print(
-                                                "kjdjfkj-${value.salesitemListdata2[0]['code']}----${value.salesitemListdata2[0]['item']}---${value.salesitemListdata2[0]['rate1']}----${value.salesitemListdata2[0]['tax']}");
+                                            // print(
+                                            //     "kjdjfkj-${value.salesitemListdata2[0]['code']}----${value.salesitemListdata2[0]['item']}---${value.salesitemListdata2[0]['rate1']}----${value.salesitemListdata2[0]['tax']}");
                                             // value.selectedItem =
                                             //     null;
 
@@ -548,7 +550,7 @@ class _ReturnItem2State extends State<ReturnItem2> {
                                             Provider.of<Controller>(context,
                                                     listen: false)
                                                 .setUnitSale_X001(
-                                                    value.frstDropDown!, index);
+                                                    value.frstDropDown!, index,widget.cusrateid);
                                             value.selectedItem =
                                                 value.frstDropDown;
 
@@ -613,7 +615,7 @@ class _ReturnItem2State extends State<ReturnItem2> {
                                                 0.00,
                                                 // value.newList[index]
                                                 //     ["ActStock"],
-                                                "return");
+                                                "return",widget.cusrateid);
                                           }
                                         },
                                         dense: true,
@@ -723,8 +725,8 @@ class _ReturnItem2State extends State<ReturnItem2> {
                                         "0.0";
                                     value.discount_amount_X001[index].text =
                                         "0.0";
-                                    print(
-                                        "kjdjfkj-${value.salesitemListdata2[0]['code']}----${value.salesitemListdata2[0]['item']}---${value.salesitemListdata2[0]['rate1']}----${value.salesitemListdata2[0]['tax']}");
+                                    // print(
+                                    //     "kjdjfkj-${value.salesitemListdata2[0]['code']}----${value.salesitemListdata2[0]['item']}---${value.salesitemListdata2[0]['rate1']}----${value.salesitemListdata2[0]['tax']}");
                                                                           
                                     // value.selectedItem =
                                     //     null;
@@ -737,7 +739,7 @@ class _ReturnItem2State extends State<ReturnItem2> {
                                     Provider.of<Controller>(context,
                                             listen: false)
                                         .setUnitSale_X001(
-                                            value.frstDropDown!, index);
+                                            value.frstDropDown!, index,widget.cusrateid);
                                     value.selectedItem = value.frstDropDown;
 
                                     value.salesqty_X001[index].text = "1.0";
@@ -787,7 +789,7 @@ class _ReturnItem2State extends State<ReturnItem2> {
                                         widget.branch_id,
                                         0.00,
                                         // value.salesitemList2[index]["ActStock"],
-                                        "return");
+                                        "return",widget.cusrateid);
                                   }
                                 },
                                 // dense: true,

@@ -2270,10 +2270,10 @@ class OrderAppDB {
     Database db = await instance.database;
     var unitquery = "";
     unitquery = "SELECT p.pid as pid,p.code code,p.item item, p.unit unit, 1 pkg ,p.companyId companyId,p.hsn hsn, " +
-        "p.tax tax,p.prate prate,p.mrp mrp,p.cost cost,p.rate1 rate1,p.rate2 rate2, " +
+        "p.tax tax,p.prate prate,p.mrp mrp,p.cost cost,p.rate1 rate1,p.rate2 rate2,p.rate3 rate3, " +
         "p.categoryId  categoryId from 'productDetailsTable' p where p.code= '$prod_code' union all " +
         "SELECT pd.pid,pd.code,pd.item,u.unit_name unit,u.package pkg,pd.companyId,pd.hsn, " +
-        "pd.tax,pd.prate,pd.mrp,pd.cost,pd.rate1 ,pd.rate2, pd.categoryId  from 'productDetailsTable' pd " +
+        "pd.tax,pd.prate,pd.mrp,pd.cost,pd.rate1 ,pd.rate2,pd.rate3, pd.categoryId  from 'productDetailsTable' pd " +
         "inner  join 'productUnits' u  ON u.pid = pd.pid where pd.code= '$prod_code' order by pkg";
 
     // unitquery = "SELECT p.pid prid,p.code prcode,p.item pritem, p.unit prunit, 1 pkg ,p.companyId prcid,p.hsn prhsn, " +
