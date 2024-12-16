@@ -755,7 +755,7 @@ class _OrderFormState extends State<OrderForm> with TickerProviderStateMixin {
                                                                                         setState(() {
                                                                                           customertext.text = values.custmerDetails[index]['hname'].toString().trimLeft();
                                                                                           custmerId = values.custmerDetails[index]['ac_code'].toString().trimLeft();
-                                                                                        });
+                                                                                        });                                                         
                                                                                         FocusManager.instance.primaryFocus?.unfocus();
                                                                                         // Provider.of<Controller>(context, listen: false).setCustomerName(values.custmerDetails[index]['hname']);
                                                                                         // Navigator.of(context).push(
@@ -964,13 +964,14 @@ class _OrderFormState extends State<OrderForm> with TickerProviderStateMixin {
                                                           //         custmerId
                                                           //             .toString(),
                                                           //         "orderform");
-                                                           List customerDet = await OrderAppDB
-                                                                      .instance
-                                                                      .selectAllcommon(
-                                                                          'accountHeadsTable',
-                                                                          "ac_code='$custmerId'");
-                                                                  print(
-                                                                      "customerDet------$customerDet");
+                                                          List customerDet =
+                                                              await OrderAppDB
+                                                                  .instance
+                                                                  .selectAllcommon(
+                                                                      'accountHeadsTable',
+                                                                      "ac_code='$custmerId'");
+                                                          print(
+                                                              "customerDet------$customerDet");
                                                           String os =
                                                               //  "R"
                                                               "${values.ordernum[0]["os"]}";
@@ -1030,8 +1031,7 @@ class _OrderFormState extends State<OrderForm> with TickerProviderStateMixin {
                                                                   type: "return",
                                                                   gtype: "return",
                                                                   branch_id: branch_id.toString(),
-                                                                  cusrateid:
-                                                                            int.parse(customerDet[0]["ri"].toString())),
+                                                                  cusrateid: int.parse(customerDet[0]["ri"].toString())),
                                                             ),
                                                           );
                                                           // Navigator.of(context)

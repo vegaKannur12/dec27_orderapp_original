@@ -5,6 +5,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:sqlorder24/components/BlueTotth%20print/pdfbill.dart';
+import 'package:sqlorder24/screen/IMINPrinter/imintest.dart';
 import 'package:sqlorder24/screen/ORDER/DateFinder.dart';
 import 'package:sqlorder24/screen/historydataPopup.dart';
 
@@ -104,7 +105,8 @@ class _TodaySaleState extends State<TodaySale> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) 
+  {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
       body: Consumer<Controller>(
@@ -136,7 +138,18 @@ class _TodaySaleState extends State<TodaySale> {
                         //       await OrderAppDB.instance.restoreDB();
                         //     },
                         //     child: Text("restore")),
+                      //  IconButton(onPressed: (){
+                      //    Navigator.of(context).push(
+                      //                             PageRouteBuilder(
+                      //                                 opaque:
+                      //                                     false, // set to false
+                      //                                 pageBuilder: (_, __, ___) =>
+                      //                                    NewHome()
+                      //                                 // OrderForm(widget.areaname,"return"),
+                      //                                 ),
+                      //                           );
 
+                      //  }, icon: Icon(Icons.print)),
                         IconButton(
                             onPressed: () {
                               dateFind.selectDateFind(
@@ -330,7 +343,8 @@ class _TodaySaleState extends State<TodaySale> {
                                           Spacer(),
 
                                           InkWell(
-                                              onTap: () async {
+                                              onTap: () async 
+                                              {
                                                 // Provider.of<Controller>(context,
                                                 //         listen: false)
                                                 //     .getBalance(cid, value.todaySalesList[index]["Cus_id"],
@@ -338,9 +352,12 @@ class _TodaySaleState extends State<TodaySale> {
                                                 String cancelled;
                                                 if (value.todaySalesList[index]
                                                         ["cancel"] ==
-                                                    1) {
+                                                    1) 
+                                                {
                                                   cancelled = "cancelled";
-                                                } else {
+                                                } 
+                                                else 
+                                                {
                                                   cancelled = "not cancelled";
                                                 }
                                                 List<Map<String, dynamic>>
@@ -374,7 +391,7 @@ class _TodaySaleState extends State<TodaySale> {
                                                         outst[0]
                                                             ["outstanding"]);
                                               },
-                                              child: Icon(Icons.download)
+                                              child: Icon(Icons.send)
                                               // Icon(Icons.print)
                                               ),
                                         ],

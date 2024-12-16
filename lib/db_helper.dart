@@ -2776,10 +2776,13 @@ class OrderAppDB {
     print("query---$query2");
 
     result = await db.rawQuery(query2);
-    if (result.length > 0) {
+    if (result.length > 0) 
+    {
       print("printcurrentdata ------$result");
       return result;
-    } else {
+    } 
+    else 
+    {
       return null;
     }
   }

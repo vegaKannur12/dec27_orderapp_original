@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:sqlorder24/components/IminPrint/iminprint.dart';
 import 'package:sqlorder24/components/commoncolor.dart';
 import 'package:sqlorder24/controller/controller.dart';
 import 'package:sqlorder24/screen/SALES/print_report.dart';
@@ -85,12 +86,16 @@ class _UploadPendingState extends State<UploadPending> {
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
                             IconButton(
-                                onPressed: () {
-                                  PrintReport printer = PrintReport();
-                                  printer.printReport(
-                                      value.todaySalesList, "sales");
-                                },
-                                icon: Icon(Icons.print))
+                              onPressed: () {
+                                // PrintReport printer = PrintReport();
+                                // printer.printReport(
+                                //     value.todaySalesList, "sales");
+                                print("sale rep uplod pending");
+                                IminPrintClass imp = IminPrintClass();
+                                imp.printReport(value.todaySalesList, "sales");
+                              },
+                              icon: Icon(Icons.print),
+                            )
                           ],
                         ),
                         Container(
@@ -111,6 +116,7 @@ class _UploadPendingState extends State<UploadPending> {
                                   style: TextStyle(fontSize: 12),
                                 )),
                               ),
+                              
                               DataColumn(
                                 label: Text(
                                   'Date',

@@ -787,8 +787,22 @@ class Controller extends ChangeNotifier {
       var res = await SqlConn.readData("FLT_GENERATE_SALES_INVOICE");
       print("FLT_GENERATE_SALES_INVOICE---$res");
     } on PlatformException catch (e) {
-      debugPrint("PlatformException brnch: ${e.message}");
-      debugPrint("not connected..brnch..");
+      debugPrint("PlatformException sale_invoi: ${e.message}");
+      debugPrint("not connected..sale_invoi..");
+      // Navigator.pop(context);
+      // await showConnectionDialog(context, "TCAT", e.toString());
+    } catch (e) {
+      print("An unexpected error occurred: $e");
+    }
+  }
+
+  generateReturnInvoice(BuildContext context) async {
+    try {
+      var res = await SqlConn.readData("FLT_GENERATE_RETURN_INVOICE");
+      print("FLT_GENERATE_RETURN_INVOICE---$res");
+    } on PlatformException catch (e) {
+      debugPrint("PlatformException ret_invoice: ${e.message}");
+      debugPrint("not connected..ret_invoice..");
       // Navigator.pop(context);
       // await showConnectionDialog(context, "TCAT", e.toString());
     } catch (e) {
@@ -2917,12 +2931,18 @@ class Controller extends ChangeNotifier {
         rowNum = rowNum + 1;
       }
     }
-
+    await selectSettings("set_code in ('APP_DB_METHOD')");
+    if (settingsList1[0]["set_value"] == "ONLINE") {
+      print("Direct save and upload");
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? cmid = prefs.getString("cid");
+      await uploadSalesReturnDatasql(cmid.toString(), context, 0, "");
+    }
     print("set------$settingsList1");
 
-    if (settingsList1[0]["set_value"] == "YES") {
-      // uploadReturnData(cid!, context, 0, "comomn popup");
-    }
+    // if (settingsList1[0]["set_value"] == "YES") {
+    // uploadReturnData(cid!, context, 0, "comomn popup");
+    // }
     returnbagList.clear();
     await OrderAppDB.instance.deleteFromTableCommonQuery(
         "returnBagTable", "os='${os}' AND customerid='${customer_id}'");
@@ -5006,9 +5026,12 @@ class Controller extends ChangeNotifier {
                 // print("O Detail---$omDet");
                 String omtemp =
                     "($itemrid,$rowno,'${omDet['code']}',${omDet['qty']},'${omDet['unit']}',${omDet['rate']},${omDet['rate']},${omDet['gross']},${omDet['disc_amt']},${omDet['disc_per']},${omDet['tax_amt']},${omDet['tax_per']},${omDet['cgst_per']},${omDet['cgst_amt']},${omDet['sgst_per']},${omDet['sgst_amt']},${omDet['igst_per']},${omDet['igst_amt']},${omDet['ces_amt']},${omDet['ces_per']},${omDet['net_amt']},${omDet['qty_damage']})";
-                if (omDetString.isEmpty) {
+                if (omDetString.isEmpty) 
+                {
                   omDetString = omtemp;
-                } else {
+                } 
+                else 
+                {
                   omDetString = '$omDetString,$omtemp';
                 }
                 rowno++;
@@ -5046,15 +5069,16 @@ class Controller extends ChangeNotifier {
               if (f == 1) {
                 await OrderAppDB.instance.upadteCommonQuery("returnMasterTable",
                     "status = 1", "return_id='${itemrid}'");
-                //   await generateSalesInvoice(context);
-
+                await generateReturnInvoice(context);
                 isUpload = false;
-                if (page == "upload page") {
+                if (page == "upload page") 
+                {
                   isUp[index] = true;
                 }
                 isLoading = false;
                 notifyListeners();
-              } else {
+              } else 
+              {
                 isUpload = false;
                 if (page == "upload page") {
                   isUp[index!] = true;
@@ -5081,7 +5105,7 @@ class Controller extends ChangeNotifier {
       print("NOT connected 2nd");
     }
   }
-
+  
   /////////////////////////upload customer/////////////////////////////////////////
   uploadCustomers(BuildContext context, int? index, String page) async {
     NetConnection.networkConnection(context, "").then((value) async {
@@ -5147,44 +5171,44 @@ class Controller extends ChangeNotifier {
   }
 
   ////////////////////////upload return data////////////////////////
-  uploadReturnData(
-      String cid, BuildContext context, int? index, String page) async {
-    List<Map<String, dynamic>> resultQuery = [];
-    List<Map<String, dynamic>> om = [];
+  // uploadReturnData(
+  //     String cid, BuildContext context, int? index, String page) async {
+  //   List<Map<String, dynamic>> resultQuery = [];
+  //   List<Map<String, dynamic>> om = [];
 
-    var result = await OrderAppDB.instance.selectReturnMasterTable();
-    print("output------$result");
-    if (result.length > 0) {
-      isUpload = true;
-      notifyListeners();
+  //   var result = await OrderAppDB.instance.selectReturnMasterTable();
+  //   print("output------$result");
+  //   if (result.length > 0) {
+  //     isUpload = true;
+  //     notifyListeners();
 
-      String jsonE = jsonEncode(result);
-      var jsonDe = jsonDecode(jsonE);
-      print("jsonDe--${jsonDe}");
-      for (var item in jsonDe) {
-        resultQuery =
-            await OrderAppDB.instance.selectReturnDetailTable(item["srid"]);
-        item["od"] = resultQuery;
-        om.add(item);
-      }
-      if (om.length > 0) {
-        print("entede");
-        saveReturnDetails(cid, om, context);
-        isUpload = false;
-        if (page == "upload page") {
-          isUp[index!] = true;
-        }
-        notifyListeners();
-      }
-    } else {
-      isUp[index!] = false;
-      notifyListeners();
+  //     String jsonE = jsonEncode(result);
+  //     var jsonDe = jsonDecode(jsonE);
+  //     print("jsonDe--${jsonDe}");
+  //     for (var item in jsonDe) {
+  //       resultQuery =
+  //           await OrderAppDB.instance.selectReturnDetailTable(item["srid"]);
+  //       item["od"] = resultQuery;
+  //       om.add(item);
+  //     }
+  //     if (om.length > 0) {
+  //       print("entede");
+  //       saveReturnDetails(cid, om, context);
+  //       isUpload = false;
+  //       if (page == "upload page") {
+  //         isUp[index!] = true;
+  //       }
+  //       notifyListeners();
+  //     }
+  //   } else {
+  //     isUp[index!] = false;
+  //     notifyListeners();
 
-      snackbar.showSnackbar(context, "Nothing to upload!!!", "");
-    }
-    print("om----$om");
-    notifyListeners();
-  }
+  //     snackbar.showSnackbar(context, "Nothing to upload!!!", "");
+  //   }
+  //   print("om----$om");
+  //   notifyListeners();
+  // }
 
   /////////////////////////upload customer/////////////////////////////////////////
   uploadRemarks(BuildContext context, int index, String page) async {
@@ -6231,7 +6255,7 @@ class Controller extends ChangeNotifier {
     print("ba runtimetype------${printSalesData["master"]["ba"].runtimeType}");
 
     await generateSalesBillPdf(printSalesData, salesMasterData["payment_mode"],
-        isCancelled, balncfromsave);
+        isCancelled, balncfromsave, context);
 
     // await setConnect("DC:0D:30:63:DB:A6");
     // ///MAC
@@ -6284,24 +6308,24 @@ class Controller extends ChangeNotifier {
 //     //   MaterialPageRoute(builder: (context) => const TestScreen()),
 //     // );
 
-//     if (areaName != null && areaName.isNotEmpty && areaName != " ") {
-//       await EasyLoading.show(
-//         status: 'printing...',
-//         maskType: EasyLoadingMaskType.black,
-//       );
-//       Future.delayed(const Duration(milliseconds: 500), () {
-//         Navigator.of(context).push(
-//           PageRouteBuilder(
-//               opaque: false, // set to false
-//               pageBuilder: (_, __, ___) =>
-//                   Dashboard(type: "", areaName: areaName)
-//               // OrderForm(widget.areaname,"return"),
-//               ),
-//         );
-//       });
+    if (areaName != null && areaName.isNotEmpty && areaName != " ") {
+      await EasyLoading.show(
+        status: 'printing...',
+        maskType: EasyLoadingMaskType.black,
+      );
+      Future.delayed(const Duration(milliseconds: 500), () {
+        Navigator.of(context).push(
+          PageRouteBuilder(
+              opaque: false, // set to false
+              pageBuilder: (_, __, ___) =>
+                  Dashboard(type: "", areaName: areaName)
+              // OrderForm(widget.areaname,"return"),
+              ),
+        );
+      });
 
-//       await EasyLoading.dismiss();
-//     }
+      await EasyLoading.dismiss();
+    }
     notifyListeners();
   }
 
@@ -6445,8 +6469,7 @@ class Controller extends ChangeNotifier {
               "selected- rateid= $rateid--${salesitemListdata2[i]["pkg"]}-----${salesitemListdata2[i]["rate2"]}");
           calculatedRate = salesitemListdata2[i]["pkg"] *
               double.parse(salesitemListdata2[i]["rate2"]);
-        }
-        else if (rateid == 7) {
+        } else if (rateid == 7) {
           print(
               "selected- rateid= $rateid--${salesitemListdata2[i]["pkg"]}-----${salesitemListdata2[i]["rate3"]}");
           calculatedRate = salesitemListdata2[i]["pkg"] *

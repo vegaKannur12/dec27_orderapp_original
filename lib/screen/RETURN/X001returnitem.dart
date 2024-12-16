@@ -92,7 +92,8 @@ class _ReturnItem2State extends State<ReturnItem2> {
     // Provider.of<Controller>(context, listen: false)
     //     .getSaleProductList(widget.customerId);
     Future.delayed(Duration(seconds: 1), () {
-      setState(() {
+      setState(() 
+      {
         _isLoading = false;
       });
     });

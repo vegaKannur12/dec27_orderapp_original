@@ -414,7 +414,7 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin {
               .todayCollection(s[0], "");
           return TodayCollection();
         }
-        
+               
       case "6":
         {
           Provider.of<Controller>(context, listen: false).setDate(s[0], "");
