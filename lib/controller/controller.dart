@@ -4331,7 +4331,7 @@ class Controller extends ChangeNotifier {
     // print("collectioncount...$collectionCount");
     // remarkCount = res[0]["rmCnt"].toString();
     // print("remarkCount...$remarkCount");
-    // ret_count = res[0]["retCnt"].toString();
+    ret_count = res[0]["retCnt"].toString();
     cs_cnt = res[0]["saleCntCS"].toString();
     cs_amt = res[0]["saleValCS"].toString();
     cr_cnt = res[0]["saleCntCR"].toString();
@@ -4372,12 +4372,12 @@ class Controller extends ChangeNotifier {
         d4 = res[0]["retVal"];
       }
     }
-    returnAmount = d4.toStringAsFixed(2);
+    returnAmount = d4.abs().toStringAsFixed(2);
     if (res[0]["saleValCR"] != null) {
       if (res[0]["saleValCR"] == 0) {
         d4 = 0.0;
       } else {
-        d4 = res[0]["saleValCR"];
+        d4 =res[0]["saleValCR"];
       }
     }
     creditSaleAmt = d4.toStringAsFixed(2);

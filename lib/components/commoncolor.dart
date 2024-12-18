@@ -48,6 +48,7 @@ class P_Settings {
   static Color get dashbordcl4 => Color.fromARGB(255, 223, 198, 56);
   static Color get dashbordcl5 => Color.fromARGB(255, 206, 62, 219);
   static Color get dashbordcl6 => Color.fromARGB(255, 44, 228, 142);
+  static Color get dashbordcl7 => Color.fromARGB(255, 236, 134, 151);
 
   static Color get bottomNavButton => Colors.white;
 

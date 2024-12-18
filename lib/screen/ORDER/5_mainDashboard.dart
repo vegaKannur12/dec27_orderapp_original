@@ -570,6 +570,38 @@ class _MainDashboardState extends State<MainDashboard> {
                             ),
                           ],
                         ),
+                         Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(0),
+                              child: customcard(
+                                  size,
+                                  "Sale Return",
+                                  "${value.ret_count == null || value.ret_count == "null" ? "0" : value.ret_count}" +
+                                      "/" +
+                                      "\u{20B9}${value.returnAmount == "null" ? "0.0" : value.returnAmount}"),
+                            ),
+                            // // Padding(
+                            // //   padding: const EdgeInsets.all(0),
+                            // //   child: customcard(
+                            // //       size,
+                            // //       "Cancelled Bills",
+                            // //       "${value.can_bill_count == null || value.can_bill_count == "null" ? "0" : value.can_bill_count}" +
+                            // //           "/" +
+                            // //           "\u{20B9}${value.can_bill_amt==null || value.can_bill_amt == "null" ? "0.00" : value.can_bill_amt}"),
+                            // // ),
+                            // Padding(
+                            //   padding: const EdgeInsets.all(0),
+                            //   child: customcard(
+                            //       size,
+                            //       "Collection",
+                            //       // "${value.can_bill_count == "null" ? "0" : value.can_bill_count}" +
+                            //       //     "/" +
+                            //       "\u{20B9}${value.collectionAmount == null || value.collectionAmount == "null" ? "0.00" : value.collectionAmount}"),
+                            // ),
+                          ],
+                        ),
                       ],
                     ),
                   ),
@@ -735,6 +767,7 @@ class _MainDashboardState extends State<MainDashboard> {
                             ? P_Settings.dashbordcl5
                             : title == "Shops Not Visited"
                                 ? P_Settings.dashbordcl6
+                                :title == "Sale Return"?P_Settings.dashbordcl7
                                 : P_Settings.dashbordcl2,
         child: Padding(
           padding: const EdgeInsets.all(4.0),

@@ -937,10 +937,8 @@ class OrderAppDB {
     print("qty--$qty...$unit_name..$packagenm...$cartrowno");
     print("code...........$code");
     final db = await database;
-
     print(
         "baseRate calculated....$rate.....$baseRate...$unit_name.....$net_amt......$packagenm----$tax---$discount_per----$discount_amt");
-
     var res;
     var query3;
     var query2;
@@ -952,7 +950,6 @@ class OrderAppDB {
       double updatedQty = qty1 + qty;
       double amount = double.parse(res1[0]["totalamount"]);
       print("res1.length----${res1.length}");
-
       // double amount1 = double.parse(totalamount);
       double amount1 = totalamount;
       double updatedAmount = amount + amount1;
@@ -1005,7 +1002,8 @@ class OrderAppDB {
       String? unit_name,
       double packagenm,
       double baseRate,
-      String branch_id) async {
+      String branch_id) async 
+      {
     print("qty--$qty");
     print("unit_name...........$unit_name");
     final db = await database;
@@ -1014,7 +1012,6 @@ class OrderAppDB {
     var query2;
     print(
         "baseRate calculated....$rate.....$baseRate...$unit_name.....$net_amt......$packagenm----$tax---$discount_per----$discount_amt");
-
     List<Map<String, dynamic>> res1 = await db.rawQuery(
         'SELECT  * FROM salesBagTable WHERE customerid="${customerid}" AND os = "${os}" AND code="${code}" AND unit_name="${unit_name}"');
     print("res1cvc ---$res1");
@@ -2816,10 +2813,13 @@ class OrderAppDB {
     print("comndjsjhfsdh----$condition");
     Database db = await instance.database;
     var query;
-    if (type == "upload history") {
+    if (type == "upload history") 
+    {
       query =
           'select accountHeadsTable.hname as cus_name,accountHeadsTable.ba as ba, accountHeadsTable.ac_ad1 as address, accountHeadsTable.ac_gst as gstin, salesMasterTable.sales_id sales_id,salesMasterTable.rounding roundoff, salesMasterTable.os  || salesMasterTable.sales_id as sale_Num,salesMasterTable.customer_id Cus_id,salesMasterTable.salesdate   Date, count(salesDetailTable.row_num) count,salesMasterTable.gross_tot grossTot,salesMasterTable.payment_mode payment_mode,salesMasterTable.credit_option creditoption, salesMasterTable.tot_aftr_disc, salesMasterTable.tax_tot as taxtot, salesMasterTable.dis_tot as distot ,salesMasterTable.cancel as cancel  from salesMasterTable inner join salesDetailTable on salesMasterTable.sales_id=salesDetailTable.sales_id inner join accountHeadsTable on accountHeadsTable.ac_code= salesMasterTable.customer_id where salesMasterTable.salesdate="${date}" and salesMasterTable.status != 0  $condition group by salesMasterTable.sales_id';
-    } else if (type == "history pending") {
+    } 
+    else if (type == "history pending") 
+    {
       query =
           'select accountHeadsTable.hname as cus_name,accountHeadsTable.ba as ba, accountHeadsTable.ac_ad1 as address, accountHeadsTable.ac_gst as gstin, salesMasterTable.sales_id sales_id,salesMasterTable.rounding roundoff, salesMasterTable.os  || salesMasterTable.sales_id as sale_Num,salesMasterTable.customer_id Cus_id,salesMasterTable.salesdate   Date, count(salesDetailTable.row_num) count,salesMasterTable.gross_tot grossTot,salesMasterTable.payment_mode payment_mode,salesMasterTable.credit_option creditoption, salesMasterTable.tot_aftr_disc, salesMasterTable.tax_tot as taxtot, salesMasterTable.dis_tot as distot ,salesMasterTable.cancel as cancel  from salesMasterTable inner join salesDetailTable on salesMasterTable.sales_id=salesDetailTable.sales_id inner join accountHeadsTable on accountHeadsTable.ac_code= salesMasterTable.customer_id where salesMasterTable.salesdate="${date}" and salesMasterTable.status == 0  $condition group by salesMasterTable.sales_id';
     } else if (type == "sale report") {
