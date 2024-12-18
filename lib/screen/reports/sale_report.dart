@@ -84,6 +84,7 @@ class _SaleReportState extends State<SaleReport> {
                                   print("sale rep)T"); 
                                   IminPrintClass imp=IminPrintClass();
                                   imp.printReport(value.todaySalesList, "sales");
+                                  
                                   // PrintReport printer = PrintReport();
                                   // printer.printReport(
                                   //     value.todaySalesList, "sales");

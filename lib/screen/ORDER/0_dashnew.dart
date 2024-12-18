@@ -390,7 +390,6 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin {
               .todaySales(s[0], " ", "history pending");
           return new UploadPending();
         }
-
       case "4":
         {
           Provider.of<Controller>(context, listen: false).setDate(s[0], "");
@@ -398,7 +397,6 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin {
               .todaySales(s[0], " ", "");
           return new TodaySale();
         }
-
       // case "1":
       //   {
       //     Provider.of<Controller>(context, listen: false).setDate(s[0], "");
@@ -406,15 +404,14 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin {
       //         .todayOrder(s[0], gen_condition!);
       //     return new TodaysOrder();
       //   }
-
+           
       case "5":
         {
           Provider.of<Controller>(context, listen: false).setDate(s[0], "");
           Provider.of<Controller>(context, listen: false)
               .todayCollection(s[0], "");
           return TodayCollection();
-        }
-               
+        }            
       case "6":
         {
           Provider.of<Controller>(context, listen: false).setDate(s[0], "");
@@ -423,8 +420,7 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin {
                 .selectStockandProdfromDB(context);
           });
           return StockReport();
-        }
-                  
+        }                  
       // case "3":
       //   {
       //     Provider.of<Controller>(context, listen: false).setDate(s[0], "");
@@ -466,7 +462,7 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin {
                         os: os,
                         staff_id: staff_id,
                         userType: userType),
-                  ));
+                  ),);
             } else {
               print("webview page outsideeee");
               return NoNetwork();

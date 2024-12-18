@@ -12,6 +12,7 @@ import 'package:sql_conn/sql_conn.dart';
 import 'package:sqlorder24/components/BlueTotth%20print/2blutoothPrint.dart';
 import 'package:sqlorder24/components/BlueTotth%20print/blutooth.dart';
 import 'package:sqlorder24/components/BlueTotth%20print/pdfbill.dart';
+import 'package:sqlorder24/components/BlueTotth%20print/r-pdfbill.dart';
 import 'package:sqlorder24/components/customSnackbar.dart';
 import 'package:sqlorder24/components/sunmi.dart';
 import 'package:sqlorder24/db_helper.dart';
@@ -62,6 +63,7 @@ class Controller extends ChangeNotifier {
   bool isCartLoading = false;
   bool prNullvalue = false;
   Map<String, dynamic> printSalesData = {};
+  Map<String, dynamic> printReturnData = {};
   List prUnitSaleListData2 = [];
   double disc_amt = 0.0;
   double net_amt = 0.0;
@@ -2468,7 +2470,6 @@ class Controller extends ChangeNotifier {
     if (salebagList.length > 0) {
       String billNo = "${os}" + "${sales_id}";
       print("bill no........$total_price");
-
       var result = await OrderAppDB.instance.insertsalesMasterandDetailsTable(
           sales_id,
           0,
@@ -2927,7 +2928,6 @@ class Controller extends ChangeNotifier {
               "",
               0);
         }
-
         rowNum = rowNum + 1;
       }
     }
@@ -2947,6 +2947,7 @@ class Controller extends ChangeNotifier {
     await OrderAppDB.instance.deleteFromTableCommonQuery(
         "returnBagTable", "os='${os}' AND customerid='${customer_id}'");
     notifyListeners();
+    return return_id;
   }
 
   //////////////////staff log details insertion//////////////////////
@@ -3871,6 +3872,43 @@ class Controller extends ChangeNotifier {
       print(
           "result sal-----......$roundoff....${salesTotal}----${gross_tot}---${tax_tot}---${cess_tot}--${dis_tot}");
       print("salesTotal---$salesTotal");
+      notifyListeners();
+      orderTotal2.clear();
+      if (res.length > 0) {
+        for (var item in res) {
+          print("sfhdsj----$item");
+
+          orderTotal2.add(item);
+        }
+      }
+      print("orderTotal2.....$orderTotal2");
+      notifyListeners();
+    } catch (e) {
+      print(e);
+    }
+    // return res[0];
+  }
+
+  /////////calculate total////////////////
+  calculateReturnTotal(String os, String customerId) async {
+    try {
+      print("calculate return updated tot....$os...$customerId");
+      List res = await OrderAppDB.instance.getReturntotalSum(os, customerId);
+      print("respongtyht...........$res");
+      double sTotal = double.parse(res[0]);
+      gross_tot = double.parse(res[5]);
+      tax_tot = res[9];
+      cess_tot = double.parse(res[4]);
+      // print("result sale...${res[3].runtimeType}");
+      dis_tot = double.parse(res[3]);
+      print("result return...${res[10].runtimeType}");
+      roundoff = res[10];
+      print("result return.22..${roundoff}");
+      salesTotal = roundoff + sTotal;
+      totalAftrdiscount = salesTotal; //added on nov1
+      print(
+          "result return-----......$roundoff....${salesTotal}----${gross_tot}---${tax_tot}---${cess_tot}--${dis_tot}");
+      print("return Total---$salesTotal");
       notifyListeners();
       orderTotal2.clear();
       if (res.length > 0) {
@@ -5025,13 +5063,10 @@ class Controller extends ChangeNotifier {
                 omDet = item;
                 // print("O Detail---$omDet");
                 String omtemp =
-                    "($itemrid,$rowno,'${omDet['code']}',${omDet['qty']},'${omDet['unit']}',${omDet['rate']},${omDet['rate']},${omDet['gross']},${omDet['disc_amt']},${omDet['disc_per']},${omDet['tax_amt']},${omDet['tax_per']},${omDet['cgst_per']},${omDet['cgst_amt']},${omDet['sgst_per']},${omDet['sgst_amt']},${omDet['igst_per']},${omDet['igst_amt']},${omDet['ces_amt']},${omDet['ces_per']},${omDet['net_amt']},${omDet['qty_damage']})";
-                if (omDetString.isEmpty) 
-                {
+                    "($itemrid,$rowno,'${omDet['code']}',${omDet['qty']},'${omDet['unit']}',${omDet['rate']},${omDet['rate']},${omDet['gross']},${omDet['disc_amt']},${omDet['disc_per']},${omDet['tax_amt']},${omDet['tax_per']},${omDet['cgst_per']},${omDet['cgst_amt']},${omDet['sgst_per']},${omDet['sgst_amt']},${omDet['igst_per']},${omDet['igst_amt']},${omDet['ces_amt']},${omDet['ces_per']},${omDet['net_amt']},${omDet['qty_damage']},'${omDet['packing']}')";
+                if (omDetString.isEmpty) {
                   omDetString = omtemp;
-                } 
-                else 
-                {
+                } else {
                   omDetString = '$omDetString,$omtemp';
                 }
                 rowno++;
@@ -5052,7 +5087,7 @@ class Controller extends ChangeNotifier {
 
               // ommastrString
               var resdet = await SqlConn.writeData(
-                  "INSERT INTO [salereturn_details]([ret_id],[row_no],[Code],[Qty],[unit],[rate],[baserate],[grossamt],[discamt],[discper],[taxamt],[taxper],[cgstper],[cgstamt],[sgstper],[sgstamt],[igstper],[igstamt],[cessamt],[cessper],[net_amt],[qty_damage]) VALUES $omDetString");
+                  "INSERT INTO [salereturn_details]([ret_id],[row_no],[Code],[Qty],[unit],[rate],[baserate],[grossamt],[discamt],[discper],[taxamt],[taxper],[cgstper],[cgstamt],[sgstper],[sgstamt],[igstper],[igstamt],[cessamt],[cessper],[net_amt],[qty_damage],[packing]) VALUES $omDetString");
               f = 1;
               // print("qryres-----$f---$res");
               print("qryrespo-----$f------$res");
@@ -5071,14 +5106,12 @@ class Controller extends ChangeNotifier {
                     "status = 1", "return_id='${itemrid}'");
                 await generateReturnInvoice(context);
                 isUpload = false;
-                if (page == "upload page") 
-                {
+                if (page == "upload page") {
                   isUp[index] = true;
                 }
                 isLoading = false;
                 notifyListeners();
-              } else 
-              {
+              } else {
                 isUpload = false;
                 if (page == "upload page") {
                   isUp[index!] = true;
@@ -5105,7 +5138,7 @@ class Controller extends ChangeNotifier {
       print("NOT connected 2nd");
     }
   }
-  
+
   /////////////////////////upload customer/////////////////////////////////////////
   uploadCustomers(BuildContext context, int? index, String page) async {
     NetConnection.networkConnection(context, "").then((value) async {
@@ -6307,6 +6340,61 @@ class Controller extends ChangeNotifier {
 //     //   context,
 //     //   MaterialPageRoute(builder: (context) => const TestScreen()),
 //     // );
+
+    if (areaName != null && areaName.isNotEmpty && areaName != " ") {
+      await EasyLoading.show(
+        status: 'printing...',
+        maskType: EasyLoadingMaskType.black,
+      );
+      Future.delayed(const Duration(milliseconds: 500), () {
+        Navigator.of(context).push(
+          PageRouteBuilder(
+              opaque: false, // set to false
+              pageBuilder: (_, __, ___) =>
+                  Dashboard(type: "", areaName: areaName)
+              // OrderForm(widget.areaname,"return"),
+              ),
+        );
+      });
+
+      await EasyLoading.dismiss();
+    }
+    notifyListeners();
+  }
+
+//////////////////////////////////////////////////////////////
+  printReturn(
+      String cid,
+      BuildContext context,
+      Map<String, dynamic> returnMasterData,
+      String? areaName,
+      String isCancelled) async {
+    List<Map<String, dynamic>> taxableData = [];
+    List<Map<String, dynamic>> resultQuery = [];
+
+    // print("outputjknhjkjkkjj------${salesMasterData["sales_id"]}");
+    List<Map<String, dynamic>> companyData = [];
+    List<Map<String, dynamic>> staffData = [];
+    taxableData = await OrderAppDB.instance
+        .printTaxableDetailsReturn(returnMasterData["return_id"]);
+    resultQuery = await OrderAppDB.instance
+        .selectSalesReturnDetailTable(returnMasterData["return_id"]);
+    companyData =
+        await OrderAppDB.instance.selectAllcommon('registrationTable', "");
+    staffData =
+        await OrderAppDB.instance.selectAllcommon('staffLoginDetailsTable', "");
+    // print("company dataa.............$companyData");
+    print("result quru----$companyData");
+    printReturnData["company"] = companyData;
+    printReturnData["staff"] = staffData;
+    printReturnData["master"] = returnMasterData;
+    printReturnData["detail"] = resultQuery;
+    printReturnData["taxable_data"] = taxableData;
+    print("result salesMasterData----$printReturnData");
+    // print("ba runtimetype------${printSalesData["master"]["ba"].runtimeType}");
+
+    await generateReturnBillPdf(printReturnData,
+        returnMasterData["payment_mode"], isCancelled, context);
 
     if (areaName != null && areaName.isNotEmpty && areaName != " ") {
       await EasyLoading.show(

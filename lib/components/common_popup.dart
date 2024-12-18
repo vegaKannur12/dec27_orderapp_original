@@ -10,6 +10,7 @@ import 'package:sqlorder24/screen/ORDER/0_dashnew.dart';
 
 class CommonPopup {
   int sales_id = 0;
+  int return_id = 0;
   String? cid;
   String? gen_condition;
   String? sid;
@@ -129,6 +130,8 @@ class CommonPopup {
                     Provider.of<Controller>(context, listen: false)
                         .todayOrder(date, gen_condition!);
                   } else if (type == "return") {
+                    await Provider.of<Controller>(context, listen: false)
+                        .calculateReturnTotal(os!, custmerId);
                     if (Provider.of<Controller>(context, listen: false)
                             .returnbagList
                             .length >
@@ -136,22 +139,143 @@ class CommonPopup {
                       String? sOs =
                           //  "R" +
                           "$os";
-                      Provider.of<Controller>(context, listen: false)
-                          .insertreturnMasterandDetailsTable(
-                              sOs,
-                              date,
-                              time,
-                              custmerId,
-                              sid1!,
-                              areaid,
-                              value.returnTotal,
-                              ref,
-                              reason,
-                              context, 
-                              branch_id,payment_mode);
+                      return_id =
+                          await Provider.of<Controller>(context, listen: false)
+                              .insertreturnMasterandDetailsTable(
+                        sOs,
+                        date,
+                        time,
+                        custmerId,
+                        sid1!,
+                        areaid,
+                        value.returnTotal,
+                        ref,
+                        reason,
+                        context,
+                        branch_id,
+                        payment_mode,
+                      );
                       Provider.of<Controller>(context, listen: false)
                           .returnCount = 0;
-                     
+                      return showDialog(
+                          barrierDismissible: false,
+                          context: context,
+                          builder: (context) {
+                            Size size = MediaQuery.of(context).size;
+                            return AlertDialog(
+                                content: Container(
+                              height: 150,
+                              child: Column(
+                                children: [
+                                  Text("Do you want to print"),
+                                  SizedBox(
+                                    height: size.height * 0.03,
+                                  ),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: [
+                                      ElevatedButton(
+                                        onPressed: () async {
+                                          List<Map<String, dynamic>> result =
+                                              await OrderAppDB.instance
+                                                  .printcurrentDataReturn(
+                                                      return_id);
+                                          print("resultt printt......$result");
+                                          Provider.of<Controller>(context,
+                                                  listen: false)
+                                              .printReturn(
+                                                  cid!,
+                                                  context,
+                                                  result[0],
+                                                  areaname,
+                                                  "not cancelled");
+                                        },
+                                        child: Text("Yes"),
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor:
+                                              P_Settings.salewaveColor,
+                                          textStyle: TextStyle(
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        width: size.width * 0.03,
+                                      ),
+                                      ElevatedButton(
+                                        onPressed: () {
+                                          showDialog(
+                                              barrierDismissible: false,
+                                              context: context,
+                                              builder: (context) {
+                                                Size size =
+                                                    MediaQuery.of(context).size;
+
+                                                Future.delayed(
+                                                    Duration(seconds: 2), () {
+                                                  Navigator.of(context)
+                                                      .pop(true);
+
+                                                  Navigator.of(context).push(
+                                                    PageRouteBuilder(
+                                                        opaque:
+                                                            false, // set to false
+                                                        pageBuilder: (_, __,
+                                                                ___) =>
+                                                            Dashboard(
+                                                                type:
+                                                                    "return from return",
+                                                                areaName:
+                                                                    areaname)
+                                                        // OrderForm(widget.areaname,"return"),
+                                                        ),
+                                                  );
+                                                });
+                                                return AlertDialog(
+                                                    content: Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.end,
+                                                  children: [
+                                                    Text(
+                                                      '$type  Placed!!!!',
+                                                      style: TextStyle(
+                                                          color: P_Settings
+                                                              .extracolor),
+                                                    ),
+                                                    Icon(
+                                                      Icons.done,
+                                                      color: Colors.green,
+                                                    )
+                                                  ],
+                                                )
+                                                );
+                                              });
+                                          // Navigator.pop(context);
+                                        },
+                                        child: Text("No"),
+                                        style: ElevatedButton.styleFrom(
+                                            backgroundColor:
+                                                P_Settings.salewaveColor,
+                                            textStyle: TextStyle(
+                                                fontSize: 15,
+                                                fontWeight: FontWeight.bold)),
+                                      ),
+                                    ],
+                                  ),
+
+                                  // Text(
+                                  //   '$type  Placed!!!!',
+                                  //   style:
+                                  //       TextStyle(color: P_Settings.extracolor),
+                                  // ),
+                                  // Icon(
+                                  //   Icons.done,
+                                  //   color: Colors.green,
+                                  // )
+                                ],
+                              ),
+                            ));
+                          });
                       // if (Provider.of<Controller>(context, listen: false)
                       //         .settingsList1[0]["set_value"] ==
                       //     "YES") {
@@ -161,7 +285,6 @@ class CommonPopup {
                       // }
                     }
                   }
-
 
                   Provider.of<Controller>(context, listen: false)
                       .clearList(value.areDetails);
@@ -397,17 +520,19 @@ class CommonPopup {
                                     // OrderForm(widget.areaname,"return"),
                                     ),
                               );
-                            } else if (type == 'return') {
-                              Navigator.of(context).push(
-                                PageRouteBuilder(
-                                    opaque: false, // set to false
-                                    pageBuilder: (_, __, ___) => Dashboard(
-                                        type: "return from return",
-                                        areaName: areaname)
-                                    // OrderForm(widget.areaname,"return"),
-                                    ),
-                              );
                             }
+                            // else if (type == 'return') {
+
+                            //   Navigator.of(context).push(
+                            //     PageRouteBuilder(
+                            //       opaque: false, // set to false
+                            //       pageBuilder: (_, __, ___) => Dashboard(
+                            //           type: "return from return",
+                            //           areaName: areaname),
+                            //       // OrderForm(widget.areaname,"return"),
+                            //     ),
+                            //   );
+                            // }
                           });
                           return AlertDialog(
                               content: Row(

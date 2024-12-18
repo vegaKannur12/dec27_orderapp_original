@@ -11,13 +11,19 @@ class IminPrintClass {
     // await printLogoImage();
     // await printText("Flutter is awesome");
     // await printHeader(printSalesData, payment_mode);
-    if (type == "sales") {
+    if (type == "sales") 
+    {
       await saleReportPrint(reportData);
-    } else if (type == "collection") {
+    }
+    else if (type == "collection") 
+    {
       // await collectionReportPrint(reportData);
-    } else if (type == "sale order") {
+    }   
+    else if (type == "sale order") 
+    {
       // await orderReportPrint(reportData);
     }
+    
     // await SunmiPrinter.line();
     // await printTotal(printSalesData);
     // await SunmiPrinter.lineWrap(3);

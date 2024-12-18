@@ -805,12 +805,9 @@ class OrderAppDB {
   selectCompany(String? condition) async {
     List result;
     Database db = await instance.database;
-
     result =
         await db.rawQuery('select * from registrationTable where $condition');
-
     print("select * from registrationTable where $condition");
-
     print("company deta-=-$result");
     if (result.length > 0) {
       return result;
@@ -836,7 +833,9 @@ class OrderAppDB {
     double packagenm,
     double baseRate,
     int cstatus,
-  ) async {
+  )
+  async
+  {
     print("qty--$qty");
     print("unit_name........$customerid...$unit_name");
     final db = await database;
@@ -851,7 +850,6 @@ class OrderAppDB {
       double updatedQty = qty1 + qty;
       double amount = double.parse(res1[0]["totalamount"]);
       print("res1.length----${res1.length}");
-
       double amount1 = double.parse(totalamount);
       double updatedAmount = amount + amount1;
       print("upadted qty--$qty---$updatedAmount");
@@ -863,7 +861,6 @@ class OrderAppDB {
           'INSERT INTO orderBagTable (itemName, cartdate, carttime , os, customerid, cartrowno, code, qty, rate, totalamount, pid, unit_name, package, baseRate, cstatus) VALUES ("${itemName}","${cartdate}","${carttime}", "${os}", "${customerid}", $cartrowno, "${code}", $qty, "${rate}", "${totalamount}",  $pid, "$unit_name", "$packagenm", $baseRate, $cstatus)';
       var res = await db.rawInsert(query2);
     }
-
     print("insert query result $res");
     print("insert-----$query2");
     return res;
@@ -963,9 +960,11 @@ class OrderAppDB {
       var res = await db.rawUpdate(
           'UPDATE returnBagTable SET qty=$qty , totalamount="${totalamount}" , net_amt=$net_amt ,tax_amt=$tax ,discount_per=$discount_per, discount_amt=$discount_amt,cgst_amt=$cgst_amt,sgst_amt=$sgst_amt,igst_amt=$igst_amt,unit_rate=$unit_rate WHERE customerid="${customerid}" AND os = "${os}" AND code="${code}"');
       print("response-------$res");
-    } else {
+    } 
+    else 
+    {
       query2 =
-          'INSERT INTO returnBagTable (itemName, cartdate, carttime , os, customerid, cartrowno,code, qty, rate,unit_rate, totalamount, method, hsn,tax_per, tax_amt, cgst_per, cgst_amt, sgst_per, sgst_amt, igst_per, igst_amt,ces_per,ces_amt,discount_per,discount_amt, cstatus, net_amt, pid, unit_name, package, baseRate,brrid,damagegood) VALUES ("${itemName}","${cartdate}","${carttime}", "${os}", "${customerid}", $cartrowno, "${code}", $qty, "${rate}",$unit_rate, "${totalamount}","${method}", "${hsn}",${tax_per}, ${tax}, ${cgst_per}, ${cgst_amt}, ${sgst_per}, ${sgst_amt}, ${igst_per}, ${igst_amt},${ces_per},${ces_amt},$discount_per,$discount_amt, $cstatus,"$net_amt" , $pid, "$unit_name", $packagenm, $baseRate,"$branch_id",$damagegood)';
+          'INSERT INTO returnBagTable (itemName, cartdate, carttime , os, customerid, cartrowno,code, qty, rate,unit_rate, totalamount, method, hsn,tax_per, tax_amt, cgst_per, cgst_amt, sgst_per, sgst_amt, igst_per, igst_amt,ces_per,ces_amt,discount_per,discount_amt, cstatus, net_amt, pid, unit_name, package, baseRate,brrid,damagegood) VALUES ("${itemName}","${cartdate}","${carttime}", "${os}", "${customerid}", $cartrowno, "${code}", $qty, "${rate}",$unit_rate, "${totalamount}","${method}", "${hsn}",${tax_per}, ${tax}, ${cgst_per}, ${cgst_amt}, ${sgst_per}, ${sgst_amt}, ${igst_per}, ${igst_amt},${ces_per},${ces_amt},$discount_per,$discount_amt, $cstatus,"$totalamount" , $pid, "$unit_name", $packagenm, $baseRate,"$branch_id",$damagegood)';
       var res = await db.rawInsert(query2);
     }
     print("insert query result $res");
@@ -2023,7 +2022,97 @@ class OrderAppDB {
       brate,
     ];
   }
+ /////////////////////sales product sum ////////////////////
+  getReturntotalSum(String os, String customerId) async {
+    // double sum=0.0;
+    String net_amount;
+    double tax_tot;
+    String gross;
+    String count;
+    String cesamt;
+    String cesper;
+    String taxamt;
+    String taxper;
+    String discount;
+    String disper;
+    String cgst;
+    String sgst;
+    String igst;
+    double? roundoff;
+    double? brate;
 
+    Database db = await instance.database;
+    print("calculate return updated tot in db....$os...$customerId");
+    var result = await db.rawQuery(
+        "SELECT * FROM returnBagTable WHERE os='$os' AND customerid='$customerId'");
+
+    if (result != null && result.isNotEmpty) {
+      List<Map<String, dynamic>> res = await db.rawQuery(
+          "SELECT SUM(totalamount) gr, SUM(net_amt) s, COUNT(cartrowno) c, SUM(ces_per) ces, SUM(ces_amt) camt,  SUM(tax_amt) t, SUM(tax_per) tper, SUM(discount_amt) d , SUM(discount_per) dper, SUM(cgst_amt) cgst,SUM(sgst_amt) sgst, SUM(igst_amt) igst, SUM(baserate) brate " +
+              "FROM returnBagTable WHERE os='$os' " +
+              "AND customerid='$customerId'");
+      print("resulted alll sum/////////////////$res");
+      net_amount = res[0]["s"].toStringAsFixed(2);
+      double totval = 0;
+
+      totval = double.parse(net_amount);
+      if ((totval - totval.floor()) <= 0.5) {
+        roundoff = ((totval - totval.floor()) * -1);
+      } else {
+        roundoff = (totval.ceil() - totval);
+      }
+
+      print(
+          "roundof.....$roundoff.....$totval..${totval.ceil()}...........${totval.floor()}");
+      gross = res[0]["gr"].toStringAsFixed(2);
+      count = res[0]["c"].toString();
+      taxamt = res[0]["t"].toStringAsFixed(2);
+      discount = res[0]["d"].toStringAsFixed(2);
+      disper = res[0]["dper"].toStringAsFixed(2);
+      cesamt = res[0]["camt"].toStringAsFixed(2);
+      cesper = res[0]["ces"].toStringAsFixed(2);
+      taxper = res[0]["tper"].toStringAsFixed(2);
+      cgst = res[0]["cgst"].toStringAsFixed(2);
+      sgst = res[0]["sgst"].toStringAsFixed(2);
+      igst = res[0]["igst"].toStringAsFixed(2);
+      brate = double.parse(res[0]["brate"].toStringAsFixed(2));
+      // pkg = double.parse(res[0]["pkg"].toString());
+      tax_tot = double.parse(cgst) + double.parse(sgst) + double.parse(igst);
+
+      print("tax_tot...$brate..$cgst---$sgst---$igst");
+      print(
+          "gross..netamount..taxval..dis..ces ....$brate....$tax_tot...$gross...$net_amount....$taxamt..$discount..$cesamt..$disper...$taxper");
+    } else {
+      net_amount = "0.00";
+      count = "0.00";
+      taxamt = "0.00";
+      discount = "0.00";
+      cesamt = "0.00";
+      disper = "0.00";
+      gross = "0.0";
+      cesper = "0.00";
+      taxper = "0.00";
+      cgst = "0.00";
+      sgst = "0.00";
+      igst = "0.00";
+      tax_tot = 0.00;
+      brate = 0.00;
+    }
+    return [
+      net_amount,
+      count,
+      taxamt,
+      discount,
+      cesamt,
+      gross,
+      disper,
+      cesper,
+      taxper,
+      tax_tot,
+      roundoff!,
+      brate,
+    ];
+  }
   saleDetailtotalSum() async {
     Database db = await instance.database;
     var query = "SELECT  SUM(net_amt) s from salesDetailTable";
@@ -2787,6 +2876,43 @@ class OrderAppDB {
     }
   }
 
+  ////////////////////////////////////////////////////////////////////
+    Future<dynamic> printcurrentDataReturn(int retid) async {
+    List<Map<String, dynamic>> result;
+
+    print("comndjsjhfsdh----$retid");
+    String query2 = "";
+    // String query1 = "";
+
+    Database db = await instance.database;
+    query2 = query2 +
+        " select accountHeadsTable.hname as cus_name,accountHeadsTable.ba as ba, " +
+        " accountHeadsTable.ac_ad1 as address, accountHeadsTable.ac_gst as gstin, " +
+        " returnMasterTable.return_id return_id,returnMasterTable.rounding roundoff, " +
+        " returnMasterTable.os  || returnMasterTable.return_id as Ret_Num, " +
+        " returnMasterTable.customerid Cus_id,returnMasterTable.return_date  || returnMasterTable.return_time Date, "
+            " count(returnDetailTable.row_num) count,returnMasterTable.gross_tot grossTot, " +
+        " returnMasterTable.payment_mode payment_mode,returnMasterTable.credit_option creditoption, " +
+        " returnMasterTable.net_amt, returnMasterTable.tax_tot as taxtot, returnMasterTable.dis_tot as distot " +
+        " from returnMasterTable inner join returnDetailTable on  " +
+        " returnMasterTable.return_id=returnDetailTable.return_id " +
+        " inner join " +
+        " accountHeadsTable on accountHeadsTable.ac_code= returnMasterTable.customerid " +
+        " where returnMasterTable.return_id=$retid ; ";
+    print("query---$query2");
+
+    result = await db.rawQuery(query2);
+    if (result.length > 0) 
+    {
+      print("printcurrentdata return------$result");
+      return result;
+    } 
+    else 
+    {
+      return null;
+    }
+  }
+
   //////////////select total amount form ordermasterTable ////////////
   // print
   printTaxableDetails(int salesId) async {
@@ -2802,7 +2928,20 @@ class OrderAppDB {
       return null;
     }
   }
-
+///////////////////////////////////////////////////////////////////////////////
+ printTaxableDetailsReturn(int returnId) async {
+    List<Map<String, dynamic>> result;
+    Database db = await instance.database;
+    var query =
+        " select tax_per as tper , sum(gross_amount - dis_amt) as taxable,sum(cgst_amt) as cgst, sum(sgst_amt) as sgst, sum(tax_amt) as tax from returnDetailTable where return_id=$returnId group by tax_per order by tax_per ";
+    result = await db.rawQuery(query);
+    print("taxable details--return----$result");
+    if (result.length > 0) {
+      return result;
+    } else {
+      return null;
+    }
+  }
   selectCommonQuery(String table, String? condition) async {
     List<Map<String, dynamic>> result;
     Database db = await instance.database;

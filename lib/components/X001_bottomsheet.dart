@@ -1011,7 +1011,9 @@ class CoconutSheet {
                                                   backgroundColor:
                                                       Colors.redAccent,
                                                 );
-                                              } else {
+                                              } 
+                                              else                                           
+                                              {
                                                 int max = await OrderAppDB
                                                     .instance
                                                     .getMaxCommonQuery(

@@ -56,11 +56,11 @@ dependencies:
   pdf: ^3.10.4
   
   sql_conn: 
-    path: C:/Users/PHP SERVER/Downloads/sql_conn-master/sql_conn-master
+    path: E:/FLUTTER2024/PluginsDownloaded/sql_conn-master/sql_conn-master
   printing: ^5.11.0
   bluetooth_thermal_printer: 
   # ^0.0.6
-    path : C:/Users/PHP SERVER/Downloads/BluetoothThermalPrinter-master (1)/BluetoothThermalPrinter-master
+    path : E:/FLUTTER2024/PluginsDownloaded/BluetoothThermalPrinter-master (1)/BluetoothThermalPrinter-master
   esc_pos_utils_plus: ^2.0.4
   share_plus: ^10.1.2
   url_launcher: ^6.3.1
