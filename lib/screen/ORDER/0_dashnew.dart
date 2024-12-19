@@ -24,6 +24,8 @@ import 'package:sqlorder24/screen/ORDER/6_uploaddata.dart';
 import 'package:sqlorder24/screen/ORDER/todayCollection.dart';
 import 'package:sqlorder24/screen/ORDER/todaySale.dart';
 import 'package:sqlorder24/screen/ORDER/webview.dart';
+import 'package:sqlorder24/screen/RETURN/todaysreturn.dart';
+import 'package:sqlorder24/screen/reports/return_report.dart';
 import 'package:sqlorder24/screen/reports/sale_report.dart';
 import 'package:sqlorder24/service/queryResult.dart';
 import 'package:sqlorder24/service/tableList.dart';
@@ -51,10 +53,10 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin {
     Tab(text: 'Upload History'),
     Tab(text: 'Upload Pending'),
     Tab(text: 'Todays Bills'),
+    Tab(text: 'Todays Return'),
     Tab(text: 'Todays Collection'),
-    Tab(
-      text: 'Stock Report',
-    )
+    Tab(text: 'Return Report'),
+    Tab(text: 'Stock Report',)
   ];
   List<Widget> drawerOpts = [];
   String? gen_condition;
@@ -404,15 +406,29 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin {
       //         .todayOrder(s[0], gen_condition!);
       //     return new TodaysOrder();
       //   }
-           
-      case "5":
+            case "5":
+        {
+          Provider.of<Controller>(context, listen: false).setDate(s[0], "");
+          Provider.of<Controller>(context, listen: false)
+              .todaySales(s[0], " ", "Return report");
+          return TodayReturn();
+        }  
+      case "6":
         {
           Provider.of<Controller>(context, listen: false).setDate(s[0], "");
           Provider.of<Controller>(context, listen: false)
               .todayCollection(s[0], "");
           return TodayCollection();
-        }            
-      case "6":
+        }  
+        case "7":
+        {
+
+          Provider.of<Controller>(context, listen: false).setDate(s[0], "");      
+          Provider.of<Controller>(context, listen: false)
+              .todaySales(s[0], " ", "Return report");
+          return new REturnReport();          
+        }           
+      case "8":
         {
           Provider.of<Controller>(context, listen: false).setDate(s[0], "");
           SchedulerBinding.instance.addPostFrameCallback((_) {

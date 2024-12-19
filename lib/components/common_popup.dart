@@ -154,6 +154,8 @@ class CommonPopup {
                         context,
                         branch_id,
                         payment_mode,
+                        "",
+                        "",
                       );
                       Provider.of<Controller>(context, listen: false)
                           .returnCount = 0;
@@ -247,8 +249,7 @@ class CommonPopup {
                                                       color: Colors.green,
                                                     )
                                                   ],
-                                                )
-                                                );
+                                                ));
                                               });
                                           // Navigator.pop(context);
                                         },

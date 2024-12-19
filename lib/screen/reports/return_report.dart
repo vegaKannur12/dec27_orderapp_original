@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:sqlorder24/components/BlueTotth%20print/pdfsalesbill.dart';
 import 'package:sqlorder24/components/IminPrint/iminprint.dart';
 import 'package:sqlorder24/components/commoncolor.dart';
 import 'package:provider/provider.dart';
@@ -8,14 +7,14 @@ import 'package:provider/provider.dart';
 import '../../controller/controller.dart';
 import '../SALES/print_report.dart';
 
-class SaleReport extends StatefulWidget {
-  const SaleReport({Key? key}) : super(key: key);
+class REturnReport extends StatefulWidget {
+  const REturnReport({Key? key}) : super(key: key);
 
   @override
-  State<SaleReport> createState() => _SaleReportState();
+  State<REturnReport> createState() => _REturnReportState();
 }
 
-class _SaleReportState extends State<SaleReport> {
+class _REturnReportState extends State<REturnReport> {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -81,11 +80,10 @@ class _SaleReportState extends State<SaleReport> {
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
                             IconButton(
-                                onPressed: () async {
+                                onPressed: () {
                                   print("sale rep)T"); 
-                                   await generateSalesReportPdf(context,value.todaySalesList);
-                                  // IminPrintClass imp=IminPrintClass();
-                                  // imp.printReport(value.todaySalesList, "sales");
+                                  IminPrintClass imp=IminPrintClass();
+                                  imp.printReport(value.todaySalesList, "sales");
                                   
                                   // PrintReport printer = PrintReport();
                                   // printer.printReport(

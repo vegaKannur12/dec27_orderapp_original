@@ -741,6 +741,9 @@ class OrderAppDB {
             $rounding REAL,
             $net_amt REAL,
             $state_status INTEGER,
+            $cancel INTEGER,
+            $cancel_staff TEXT,
+            $cancel_dateTime TEXT,
             $brrid TEXT,
             $status TEXT,
             $reason TEXT,
@@ -833,9 +836,7 @@ class OrderAppDB {
     double packagenm,
     double baseRate,
     int cstatus,
-  )
-  async
-  {
+  ) async {
     print("qty--$qty");
     print("unit_name........$customerid...$unit_name");
     final db = await database;
@@ -957,9 +958,7 @@ class OrderAppDB {
       var res = await db.rawUpdate(
           'UPDATE returnBagTable SET qty=$qty , totalamount="${totalamount}" , net_amt=$net_amt ,tax_amt=$tax ,discount_per=$discount_per, discount_amt=$discount_amt,cgst_amt=$cgst_amt,sgst_amt=$sgst_amt,igst_amt=$igst_amt,unit_rate=$unit_rate WHERE customerid="${customerid}" AND os = "${os}" AND code="${code}"');
       print("response-------$res");
-    } 
-    else 
-    {
+    } else {
       query2 =
           'INSERT INTO returnBagTable (itemName, cartdate, carttime , os, customerid, cartrowno,code, qty, rate,unit_rate, totalamount, method, hsn,tax_per, tax_amt, cgst_per, cgst_amt, sgst_per, sgst_amt, igst_per, igst_amt,ces_per,ces_amt,discount_per,discount_amt, cstatus, net_amt, pid, unit_name, package, baseRate,brrid,damagegood) VALUES ("${itemName}","${cartdate}","${carttime}", "${os}", "${customerid}", $cartrowno, "${code}", $qty, "${rate}",$unit_rate, "${totalamount}","${method}", "${hsn}",${tax_per}, ${tax}, ${cgst_per}, ${cgst_amt}, ${sgst_per}, ${sgst_amt}, ${igst_per}, ${igst_amt},${ces_per},${ces_amt},$discount_per,$discount_amt, $cstatus,"$totalamount" , $pid, "$unit_name", $packagenm, $baseRate,"$branch_id",$damagegood)';
       var res = await db.rawInsert(query2);
@@ -1002,8 +1001,7 @@ class OrderAppDB {
       String? unit_name,
       double packagenm,
       double baseRate,
-      String branch_id) async 
-      {
+      String branch_id) async {
     print("qty--$qty");
     print("unit_name...........$unit_name");
     final db = await database;
@@ -1243,15 +1241,18 @@ class OrderAppDB {
       double net_amt,
       double total_price,
       double rounding,
-      int state_status,     
+      int state_status,
       int status,
       double? unit_value,
       double? base_rate,
       double? packing,
-      String? branch_id,    
+      String? branch_id,
       String reason,
       String refNo,
-      double dmgqty) async {
+      double dmgqty,
+      int cancelStatus,
+      String cancel_staff,
+      String cancel_dateTime) async {
     final db = await database;
     var res2;
     var res3;
@@ -1265,7 +1266,7 @@ class OrderAppDB {
       res2 = await db.rawInsert(query2);
     } else if (table == "returnMasterTable") {
       var query3 =
-          'INSERT INTO returnMasterTable(return_id, return_date, return_time, os, customerid, userid, areaid,bill_no,total_qty,payment_mode,credit_option,gross_tot,dis_tot,tax_tot,ces_tot,rounding,net_amt ,state_status,brrid,status, reason,reference_no, total_price,rflag ) VALUES("${return_id}", "${return_date}", "${return_time}", "${os}", "${customerid}", "${userid}", "${areaid}", "${bill_no}",$total_qty, "${payment_mode}","${credit_option}", $gross_tot, $dis_tot,$tax_tot,  $ces_tot,${rounding}, ${total_price},$state_status, "${branch_id}", ${status}, "${reason}","${refNo}",${total_price.toStringAsFixed(2)}, 0)';
+          'INSERT INTO returnMasterTable(return_id, return_date, return_time, os, customerid, userid, areaid,bill_no,total_qty,payment_mode,credit_option,gross_tot,dis_tot,tax_tot,ces_tot,rounding,net_amt ,state_status, cancel ,cancel_staff,cancel_dateTime,brrid,status, reason,reference_no, total_price,rflag ) VALUES("${return_id}", "${return_date}", "${return_time}", "${os}", "${customerid}", "${userid}", "${areaid}", "${bill_no}",$total_qty, "${payment_mode}","${credit_option}", $gross_tot, $dis_tot,$tax_tot,  $ces_tot,${rounding}, ${total_price},$state_status,${cancelStatus},"${cancel_staff}","${cancel_dateTime}","${branch_id}", ${status}, "${reason}","${refNo}",${total_price.toStringAsFixed(2)}, 0)';
       res2 = await db.rawInsert(query3);
       print(query3);
     }
@@ -2019,7 +2020,8 @@ class OrderAppDB {
       brate,
     ];
   }
- /////////////////////sales product sum ////////////////////
+
+  /////////////////////sales product sum ////////////////////
   getReturntotalSum(String os, String customerId) async {
     // double sum=0.0;
     String net_amount;
@@ -2110,6 +2112,7 @@ class OrderAppDB {
       brate,
     ];
   }
+
   saleDetailtotalSum() async {
     Database db = await instance.database;
     var query = "SELECT  SUM(net_amt) s from salesDetailTable";
@@ -2404,15 +2407,11 @@ class OrderAppDB {
     //     "SELECT pd.pid,pd.code,pd.item,u.unit_name unit,u.package pkg,pd.companyId,pd.hsn, " +
     //     "pd.tax,pd.prate,pd.mrp,pd.cost,pd.rate1 , pd.categoryId  from 'productDetailsTable' pd " +
     //     "inner join 'productUnits' u  ON u.pid = pd.pid ";
-    if (type == "sale order") 
-    {
+    if (type == "sale order") {
       itemselectionquery =
           "SELECT p.pid prid,p.code prcode,p.item pritem ,p.hsn hsn ,p.rate1 prrate1,sum(o.qty) qty" +
               " from 'productDetailsTable' p left join 'orderBagTable' o on p.code =o.code and o.customerid='$customerId' group by p.pid,p.code,p.item order by p.item";
-    } 
-    else if 
-    (type == "sales") 
-    {
+    } else if (type == "sales") {
       // itemselectionquery =
       //     "SELECT p.pid prid,p.code prcode,p.item pritem ,p.hsn hsn ,p.rate1 prrate1,sum(s.qty) qty" +
       //         " from 'productDetailsTable' p left join 'salesBagTable' s on p.code  = s.code and s.customerid='$customerId' group by p.pid,p.code,p.item order by p.item";
@@ -2430,32 +2429,29 @@ class OrderAppDB {
           "on y.rtCode= st.ppid " +
           "left join 'salesBagTable' s on p.code  = s.code and s.customerid='$customerId' " +
           "group by p.pid,p.code,p.item order by (case when sum(s.qty)>=0 then 1 else 0 end) desc, p.item";
-    } 
-    else if 
-    (type == "return") 
-    {
+    } else if (type == "return") {
       // itemselectionquery =
       //     "SELECT p.pid prid,p.code prcode,p.item pritem ,p.hsn hsn ,p.rate1 prrate1,sum(s.qty) qty" +
       //         " from 'productDetailsTable' p left join 'salesBagTable' s on p.code  = s.code and s.customerid='$customerId' group by p.pid,p.code,p.item order by p.item";
       itemselectionquery =
-              " SELECT p.pid prid,p.code prcode,p.item pritem ,p.hsn hsn ,p.rate1 prrate1,sum(s.qty) qty " +
+          " SELECT p.pid prid,p.code prcode,p.item pritem ,p.hsn hsn ,p.rate1 prrate1,sum(s.qty) qty " +
               "from 'productDetailsTable' p " +
               "left join 'returnBagTable' s on p.code  = s.code and s.customerid='$customerId' " +
               "group by p.pid,p.code,p.item order by p.item";
-              
-              //  itemselectionquery =
-              // " SELECT p.pid prid,p.code prcode,p.item pritem ,p.hsn hsn ,p.rate1 prrate1,sum(s.qty) qty, " +
-              // "(cast(st.pstock as real)-IFNULL(x.slQty,0) ) ActStock ," +
-              // "(case when sum(s.qty)>=0 then 1 else 0 end) sflag " +
-              // // "(case when s.damagegood=0) " +
-              // "from 'productDetailsTable' p " +
-              // "left join stockDetailsTable st on p.code=st.ppid and cast(st.pstock as real) >= 0 " + //stok delete
-              // "Left Join (Select rd.code slCode , sum(rd.qty) slQty from returnMasterTable rm " +
-              // "Inner Join returnDetailTable rd on rm.return_id=rd.return_id " +
-              // "where rm.rflag = 0 Group By rd.code) x on x.slCode= st.ppid " +
-              // "left join 'returnBagTable' s on p.code  = s.code and s.customerid='$customerId' " +
-              // // "where s.damagegood=0 " +
-              // "group by p.pid,p.code,p.item order by (case when sum(s.qty)>=0 then 1 else 0 end) desc, p.item";
+
+      //  itemselectionquery =
+      // " SELECT p.pid prid,p.code prcode,p.item pritem ,p.hsn hsn ,p.rate1 prrate1,sum(s.qty) qty, " +
+      // "(cast(st.pstock as real)-IFNULL(x.slQty,0) ) ActStock ," +
+      // "(case when sum(s.qty)>=0 then 1 else 0 end) sflag " +
+      // // "(case when s.damagegood=0) " +
+      // "from 'productDetailsTable' p " +
+      // "left join stockDetailsTable st on p.code=st.ppid and cast(st.pstock as real) >= 0 " + //stok delete
+      // "Left Join (Select rd.code slCode , sum(rd.qty) slQty from returnMasterTable rm " +
+      // "Inner Join returnDetailTable rd on rm.return_id=rd.return_id " +
+      // "where rm.rflag = 0 Group By rd.code) x on x.slCode= st.ppid " +
+      // "left join 'returnBagTable' s on p.code  = s.code and s.customerid='$customerId' " +
+      // // "where s.damagegood=0 " +
+      // "group by p.pid,p.code,p.item order by (case when sum(s.qty)>=0 then 1 else 0 end) desc, p.item";
     }
 
     // unitquery = "select k.*,b.*, (k.prbaserate * k.pkg ) prrate1 from (" +
@@ -2813,19 +2809,25 @@ class OrderAppDB {
     print("comndjsjhfsdh----$condition");
     Database db = await instance.database;
     var query;
-    if (type == "upload history") 
-    {
+    if (type == "upload history") {
       query =
           'select accountHeadsTable.hname as cus_name,accountHeadsTable.ba as ba, accountHeadsTable.ac_ad1 as address, accountHeadsTable.ac_gst as gstin, salesMasterTable.sales_id sales_id,salesMasterTable.rounding roundoff, salesMasterTable.os  || salesMasterTable.sales_id as sale_Num,salesMasterTable.customer_id Cus_id,salesMasterTable.salesdate   Date, count(salesDetailTable.row_num) count,salesMasterTable.gross_tot grossTot,salesMasterTable.payment_mode payment_mode,salesMasterTable.credit_option creditoption, salesMasterTable.tot_aftr_disc, salesMasterTable.tax_tot as taxtot, salesMasterTable.dis_tot as distot ,salesMasterTable.cancel as cancel  from salesMasterTable inner join salesDetailTable on salesMasterTable.sales_id=salesDetailTable.sales_id inner join accountHeadsTable on accountHeadsTable.ac_code= salesMasterTable.customer_id where salesMasterTable.salesdate="${date}" and salesMasterTable.status != 0  $condition group by salesMasterTable.sales_id';
-    } 
-    else if (type == "history pending") 
-    {
+    } else if (type == "history pending") {
       query =
           'select accountHeadsTable.hname as cus_name,accountHeadsTable.ba as ba, accountHeadsTable.ac_ad1 as address, accountHeadsTable.ac_gst as gstin, salesMasterTable.sales_id sales_id,salesMasterTable.rounding roundoff, salesMasterTable.os  || salesMasterTable.sales_id as sale_Num,salesMasterTable.customer_id Cus_id,salesMasterTable.salesdate   Date, count(salesDetailTable.row_num) count,salesMasterTable.gross_tot grossTot,salesMasterTable.payment_mode payment_mode,salesMasterTable.credit_option creditoption, salesMasterTable.tot_aftr_disc, salesMasterTable.tax_tot as taxtot, salesMasterTable.dis_tot as distot ,salesMasterTable.cancel as cancel  from salesMasterTable inner join salesDetailTable on salesMasterTable.sales_id=salesDetailTable.sales_id inner join accountHeadsTable on accountHeadsTable.ac_code= salesMasterTable.customer_id where salesMasterTable.salesdate="${date}" and salesMasterTable.status == 0  $condition group by salesMasterTable.sales_id';
-    } else if (type == "sale report") {
+    } 
+    else if (type == "sale report") 
+    {
       query =
           'select accountHeadsTable.hname as cus_name,accountHeadsTable.ba as ba, accountHeadsTable.ac_ad1 as address, accountHeadsTable.ac_gst as gstin, salesMasterTable.sales_id sales_id,salesMasterTable.rounding roundoff, salesMasterTable.os  || salesMasterTable.sales_id as sale_Num,salesMasterTable.customer_id Cus_id,salesMasterTable.salesdate   Date, count(salesDetailTable.row_num) count,salesMasterTable.gross_tot grossTot,salesMasterTable.payment_mode payment_mode,salesMasterTable.credit_option creditoption, salesMasterTable.tot_aftr_disc, salesMasterTable.tax_tot as taxtot, salesMasterTable.dis_tot as distot,salesMasterTable.cancel as cancel  from salesMasterTable inner join salesDetailTable on salesMasterTable.sales_id=salesDetailTable.sales_id inner join accountHeadsTable on accountHeadsTable.ac_code= salesMasterTable.customer_id where salesMasterTable.salesdate="${date}"  and salesMasterTable.cancel == 0 $condition group by salesMasterTable.sales_id';
-    } else {
+    } 
+    else if (type == "Return report") 
+    {
+      query =
+          'select accountHeadsTable.hname as cus_name,accountHeadsTable.ba as ba, accountHeadsTable.ac_ad1 as address, accountHeadsTable.ac_gst as gstin, returnMasterTable.return_id sales_id,returnMasterTable.rounding roundoff, returnMasterTable.os  || returnMasterTable.return_id as sale_Num,returnMasterTable.customerid Cus_id,returnMasterTable.return_date Date,count(returnDetailTable.row_num) count,returnMasterTable.gross_tot grossTot,returnMasterTable.payment_mode payment_mode,returnMasterTable.credit_option creditoption,  returnMasterTable.tax_tot as taxtot, returnMasterTable.dis_tot as distot,returnMasterTable.cancel as cancel from returnMasterTable inner join returnDetailTable on returnMasterTable.return_id=returnDetailTable.return_id inner join accountHeadsTable on accountHeadsTable.ac_code= returnMasterTable.customerid where returnMasterTable.return_date="${date}"and returnMasterTable.cancel == 0 $condition group by returnMasterTable.return_id';
+    } 
+    else 
+    {
       query =
           'select accountHeadsTable.hname as cus_name,accountHeadsTable.ba as ba, accountHeadsTable.ac_ad1 as address, accountHeadsTable.ac_gst as gstin, salesMasterTable.sales_id sales_id,salesMasterTable.rounding roundoff, salesMasterTable.os  || salesMasterTable.sales_id as sale_Num,salesMasterTable.customer_id Cus_id,salesMasterTable.salesdate   Date, count(salesDetailTable.row_num) count,salesMasterTable.gross_tot grossTot,salesMasterTable.payment_mode payment_mode,salesMasterTable.credit_option creditoption, salesMasterTable.tot_aftr_disc, salesMasterTable.tax_tot as taxtot, salesMasterTable.dis_tot as distot,salesMasterTable.cancel as cancel  from salesMasterTable inner join salesDetailTable on salesMasterTable.sales_id=salesDetailTable.sales_id inner join accountHeadsTable on accountHeadsTable.ac_code= salesMasterTable.customer_id where salesMasterTable.salesdate="${date}"  $condition group by salesMasterTable.sales_id';
     }
@@ -2865,19 +2867,16 @@ class OrderAppDB {
     print("query---$query2");
 
     result = await db.rawQuery(query2);
-    if (result.length > 0) 
-    {
+    if (result.length > 0) {
       print("printcurrentdata ------$result");
       return result;
-    } 
-    else 
-    {
+    } else {
       return null;
     }
   }
 
   ////////////////////////////////////////////////////////////////////
-    Future<dynamic> printcurrentDataReturn(int retid) async {
+  Future<dynamic> printcurrentDataReturn(int retid) async {
     List<Map<String, dynamic>> result;
 
     print("comndjsjhfsdh----$retid");
@@ -2902,13 +2901,10 @@ class OrderAppDB {
     print("query---$query2");
 
     result = await db.rawQuery(query2);
-    if (result.length > 0) 
-    {
+    if (result.length > 0) {
       print("printcurrentdata return------$result");
       return result;
-    } 
-    else 
-    {
+    } else {
       return null;
     }
   }
@@ -2928,8 +2924,9 @@ class OrderAppDB {
       return null;
     }
   }
+
 ///////////////////////////////////////////////////////////////////////////////
- printTaxableDetailsReturn(int returnId) async {
+  printTaxableDetailsReturn(int returnId) async {
     List<Map<String, dynamic>> result;
     Database db = await instance.database;
     var query =
@@ -2942,6 +2939,7 @@ class OrderAppDB {
       return null;
     }
   }
+
   selectCommonQuery(String table, String? condition) async {
     List<Map<String, dynamic>> result;
     Database db = await instance.database;
@@ -3101,8 +3099,7 @@ class OrderAppDB {
     print("result sales upload----$result");
     return result;
   }
- ///////////////////////////////////////////////////////
- 
+  ///////////////////////////////////////////////////////
 
   selectSalesMasterTableByID(int sidd) async {
     Database db = await instance.database;
@@ -3145,7 +3142,7 @@ class OrderAppDB {
 
   ////////////////////////////////////////////////////////
   ///
-   selectSaleReturnMasterTable() async {
+  selectSaleReturnMasterTable() async {
     Database db = await instance.database;
     var result;
 
@@ -3153,11 +3150,11 @@ class OrderAppDB {
     // String query1 = "";
     query2 = query2 +
         " SELECT " +
-        " returnMasterTable.return_id as r_id," +    //returnMasterTable
+        " returnMasterTable.return_id as r_id," + //returnMasterTable
         " returnMasterTable.bill_no as billno," +
         " returnMasterTable.customerid cuid," +
-        " returnMasterTable.return_date rdate," +  
-        " returnMasterTable.return_time rtime," + 
+        " returnMasterTable.return_date rdate," +
+        " returnMasterTable.return_time rtime," +
         " returnMasterTable.userid as staff_id," +
         " returnMasterTable.areaid as aid ," +
         // " returnMasterTable.cus_type as cus_type," +
@@ -3175,7 +3172,6 @@ class OrderAppDB {
         // " returnMasterTable.cancel_staff as cancel_staff, " +
         // " returnMasterTable.cancel_dateTime as cancel_time," +
         "returnMasterTable.brrid || ' ' as brid," +
-
         " returnMasterTable.os as series ," +
         " returnMasterTable.total_qty as total_qty ," +
         " returnMasterTable.state_status as state_status ," +
@@ -3191,6 +3187,7 @@ class OrderAppDB {
     print("result return upload----$result");
     return result;
   }
+
   selectSalesReturnMasterTableByID(int ridd) async {
     Database db = await instance.database;
     var result;
@@ -3224,14 +3221,13 @@ class OrderAppDB {
         // " returnMasterTable.cashdisc_per as cashdisc_per," +
         // " returnMasterTable.cashdisc_amt as cashdisc_amt," +
         "returnMasterTable.brrid || ' ' as brid," +
-        
         " returnMasterTable.os as series ," +
         " returnMasterTable.total_qty as total_qty ," +
         " returnMasterTable.state_status as state_status ," +
         " returnMasterTable.status as statusid ," +
         " returnMasterTable.total_price as total_price ," +
         " returnMasterTable.rflag as rflag " +
-            " FROM returnMasterTable where returnMasterTable.return_id=$ridd ;";
+        " FROM returnMasterTable where returnMasterTable.return_id=$ridd ;";
     var res = await db.rawQuery("SELECT  * FROM  returnMasterTable");
     print("by rid----$query2");
     if (res.length > 0) {
@@ -3240,6 +3236,7 @@ class OrderAppDB {
     print("by rid result return upload----$result");
     return result;
   }
+
   //////////////////////////////////////////////////////////////
   selectReturnMasterTable() async {
     Database db = await instance.database;
@@ -3303,10 +3300,11 @@ class OrderAppDB {
     print("sales detailss------$result");
     return result;
   }
+
 //////////////////////////////////////////////////////////
   selectSalesReturnDetailTable(int ret_id) async {
     print("return id----$ret_id");
-    Database db = await instance.database; 
+    Database db = await instance.database;
     var query2 = "";
     query2 = query2 +
         "SELECT returnDetailTable.code as code,returnDetailTable.hsn as hsn," +
@@ -3330,6 +3328,7 @@ class OrderAppDB {
     print("return detailss------$result");
     return result;
   }
+
 ///////////////////////////////////////////////////////////////////////
   selectReturnDetailTable(int return_id) async {
     Database db = await instance.database;

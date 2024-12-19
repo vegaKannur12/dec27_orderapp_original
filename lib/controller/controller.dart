@@ -2707,6 +2707,8 @@ class Controller extends ChangeNotifier {
     BuildContext context,
     String branch_id,
     String payment_mode,
+    String cancel_staff,
+    String cancel_time,
   ) async {
     print(
         "values--------$date--$time$customer_id-$user_id--$aid--$total_price--$refNo--$reason--$os");
@@ -2717,56 +2719,60 @@ class Controller extends ChangeNotifier {
     if (returnbagList.length > 0) {
       String billNo = "${os}" + "${return_id}";
       await OrderAppDB.instance.insertreturnMasterandDetailsTable(
-          return_id,
-          0,
-          0.0,
-          0.0,
-          " ",
-          "",
-          date,
-          time,
-          os,
-          customer_id,
-          "",
-          billNo,
-          user_id,
-          aid,
-          0,
-          payment_mode.toString(),
-          "",
-          "",
-          rowNum,
-          "returnMasterTable",
-          "",
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          gross_tot,
-          dis_tot,
-          tax_tot,
-          cess_tot,
-          0.0,
-          total_price,
-          roundoff,
-          0,
-          0,
-          0.0,
-          0.0,
-          0.0,
-          branch_id,
-          reason!,
-          refNo!,
-          0);
+        return_id,
+        0,
+        0.0,
+        0.0,
+        " ",
+        "",
+        date,
+        time,
+        os,
+        customer_id,
+        "",
+        billNo,
+        user_id,
+        aid,
+        0,
+        payment_mode.toString(),
+        "",
+        "",
+        rowNum,
+        "returnMasterTable",
+        "",
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        gross_tot,
+        dis_tot,
+        tax_tot,
+        cess_tot,
+        0.0,
+        total_price,
+        roundoff,
+        0,
+        0,
+        0.0,
+        0.0,
+        0.0,
+        branch_id,
+        reason!,
+        refNo!,
+        0,
+        0,
+        cancel_staff,
+        cancel_time,
+      );
 
       for (var item in returnbagList) {
         print("item---${item["unit"]}");
@@ -2824,7 +2830,10 @@ class Controller extends ChangeNotifier {
               branch_id,
               "",
               "",
-              item["qty"]);
+              item["qty"],
+              0,
+              cancel_staff,
+              cancel_time);
         } else {
           print("not damageed");
           // await OrderAppDB.instance.insertreturnMasterandDetailsTable(
@@ -2926,7 +2935,10 @@ class Controller extends ChangeNotifier {
               branch_id,
               "",
               "",
-              0);
+              0,
+              0,
+              cancel_staff,
+              cancel_time);
         }
         rowNum = rowNum + 1;
       }
@@ -4183,25 +4195,49 @@ class Controller extends ChangeNotifier {
       for (var item in result) {
         DateTime tempDate = new DateFormat("yyyy-MM-dd").parse(item["Date"]);
         String date1 = DateFormat('dd-MM-yyyy').format(tempDate);
-        Map<String, dynamic> map1 = {
-          "cus_name": item["cus_name"],
-          "ba": item["ba"],
-          "gstin": item["gstin"],
-          "sales_id": item["sales_id"],
-          "roundoff": item["roundoff"],
-          "sale_Num": item["sale_Num"],
-          "Cus_id": item["Cus_id"],
-          "Date": date1,
-          "count": item["count"],
-          "grossTot": item["grossTot"],
-          "payment_mode": item["payment_mode"],
-          "creditoption": item["creditoption"],
-          "net_amt": item["tot_aftr_disc"],
-          "taxtot": item["taxtot"],
-          "distot": item["distot"],
-          "cancel": item["cancel"]
-        };
-        todaySalesList.add(map1);
+        if (type == "Return report") {
+          Map<String, dynamic> map1 = {
+            "cus_name": item["cus_name"],
+            "ba": item["ba"],
+            "gstin": item["gstin"],
+            "sales_id": item["sales_id"],
+            "roundoff": item["roundoff"],
+            "sale_Num": item["sale_Num"],
+            "Cus_id": item["Cus_id"],
+            "Date": date1,
+            "count": item["count"],
+            "grossTot": item["grossTot"],
+            "payment_mode": item["payment_mode"],
+            "creditoption": item["creditoption"],
+            "net_amt": item["grossTot"].abs(),
+            "taxtot": item["taxtot"],
+            "distot": item["distot"],
+            "cancel": item["cancel"]
+          };
+          todaySalesList.add(map1);
+        } 
+        else 
+        {
+          Map<String, dynamic> map1 = {
+            "cus_name": item["cus_name"],
+            "ba": item["ba"],
+            "gstin": item["gstin"],
+            "sales_id": item["sales_id"],
+            "roundoff": item["roundoff"],
+            "sale_Num": item["sale_Num"],
+            "Cus_id": item["Cus_id"],
+            "Date": date1,
+            "count": item["count"],
+            "grossTot": item["grossTot"],
+            "payment_mode": item["payment_mode"],
+            "creditoption": item["creditoption"],
+            "net_amt": item["tot_aftr_disc"],
+            "taxtot": item["taxtot"],
+            "distot": item["distot"],
+            "cancel": item["cancel"]
+          };
+          todaySalesList.add(map1);
+        }
       }
       print("today sales date ----$todaySalesList");
       saleReportTotal = 0.0;
@@ -4377,7 +4413,7 @@ class Controller extends ChangeNotifier {
       if (res[0]["saleValCR"] == 0) {
         d4 = 0.0;
       } else {
-        d4 =res[0]["saleValCR"];
+        d4 = res[0]["saleValCR"];
       }
     }
     creditSaleAmt = d4.toStringAsFixed(2);

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:sqlorder24/components/BlueTotth%20print/pdfsalesbill.dart';
 import 'package:sqlorder24/components/IminPrint/iminprint.dart';
 import 'package:sqlorder24/components/commoncolor.dart';
 import 'package:sqlorder24/controller/controller.dart';
@@ -86,13 +87,14 @@ class _UploadPendingState extends State<UploadPending> {
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
                             IconButton(
-                              onPressed: () {
+                              onPressed: () async {
                                 // PrintReport printer = PrintReport();
                                 // printer.printReport(
                                 //     value.todaySalesList, "sales");
                                 print("sale rep uplod pending");
-                                IminPrintClass imp = IminPrintClass();
-                                imp.printReport(value.todaySalesList, "sales");
+                                 await generateSalesReportPdf(context,value.todaySalesList);
+                                // IminPrintClass imp = IminPrintClass();
+                                // imp.printReport(value.todaySalesList, "sales");
                               },
                               icon: Icon(Icons.print),
                             )
