@@ -105,8 +105,7 @@ class _TodayReturnState extends State<TodayReturn> {
   }
 
   @override
-  Widget build(BuildContext context) 
-  {
+  Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
       body: Consumer<Controller>(
@@ -138,18 +137,18 @@ class _TodayReturnState extends State<TodayReturn> {
                         //       await OrderAppDB.instance.restoreDB();
                         //     },
                         //     child: Text("restore")),
-                      //  IconButton(onPressed: (){
-                      //    Navigator.of(context).push(
-                      //                             PageRouteBuilder(
-                      //                                 opaque:
-                      //                                     false, // set to false
-                      //                                 pageBuilder: (_, __, ___) =>
-                      //                                    NewHome()
-                      //                                 // OrderForm(widget.areaname,"return"),
-                      //                                 ),
-                      //                           );
+                        //  IconButton(onPressed: (){
+                        //    Navigator.of(context).push(
+                        //                             PageRouteBuilder(
+                        //                                 opaque:
+                        //                                     false, // set to false
+                        //                                 pageBuilder: (_, __, ___) =>
+                        //                                    NewHome()
+                        //                                 // OrderForm(widget.areaname,"return"),
+                        //                                 ),
+                        //                           );
 
-                      //  }, icon: Icon(Icons.print)),
+                        //  }, icon: Icon(Icons.print)),
                         IconButton(
                             onPressed: () {
                               dateFind.selectDateFind(
@@ -343,8 +342,7 @@ class _TodayReturnState extends State<TodayReturn> {
                                           Spacer(),
 
                                           InkWell(
-                                              onTap: () async 
-                                              {
+                                              onTap: () async {
                                                 // Provider.of<Controller>(context,
                                                 //         listen: false)
                                                 //     .getBalance(cid, value.todaySalesList[index]["Cus_id"],
@@ -352,29 +350,28 @@ class _TodayReturnState extends State<TodayReturn> {
                                                 String cancelled;
                                                 if (value.todaySalesList[index]
                                                         ["cancel"] ==
-                                                    1) 
-                                                {
+                                                    1) {
                                                   cancelled = "cancelled";
-                                                } 
-                                                else 
-                                                {
+                                                } else {
                                                   cancelled = "not cancelled";
                                                 }
-                                                  List<Map<String, dynamic>> result =
-                                              await OrderAppDB.instance
-                                                  .printcurrentDataReturn(
-                                                      value
-                                                                .todaySalesList[
-                                                            index]["sales_id"]);
-                                          print("resultt printt......$result");
-                                          Provider.of<Controller>(context,
-                                                  listen: false)
-                                              .printReturn(
-                                                  cid!,
-                                                  context,
-                                                  result[0],
-                                                  "",
-                                                  "not cancelled");
+                                                List<Map<String, dynamic>>
+                                                    result = await OrderAppDB
+                                                        .instance
+                                                        .printcurrentDataReturn(
+                                                            value.todaySalesList[
+                                                                    index]
+                                                                ["sales_id"]);
+                                                print(
+                                                    "resultt printt......$result");
+                                                Provider.of<Controller>(context,
+                                                        listen: false)
+                                                    .printReturn(
+                                                        cid!,
+                                                        context,
+                                                        result[0],
+                                                        "",
+                                                        "not cancelled");
                                               },
                                               child: Icon(Icons.send)
                                               // Icon(Icons.print)
@@ -388,11 +385,12 @@ class _TodayReturnState extends State<TodayReturn> {
                                             style: TextStyle(fontSize: 13),
                                           ),
                                           Text(
-                                              "${value.todaySalesList[index]["count"].toString()}",
-                                              style: TextStyle(
-                                                  color: Colors.grey[700],
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 17)),
+                                            "${value.todaySalesList[index]["count"].toString()}",
+                                            style: TextStyle(
+                                                color: Colors.grey[700],
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 17),
+                                          ),
                                         ],
                                       ),
                                       // SizedBox(

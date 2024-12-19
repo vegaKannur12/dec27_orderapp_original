@@ -83,23 +83,24 @@ class _UploadPendingState extends State<UploadPending> {
                     )
                   : Column(
                       children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            IconButton(
-                              onPressed: () async {
-                                // PrintReport printer = PrintReport();
-                                // printer.printReport(
-                                //     value.todaySalesList, "sales");
-                                print("sale rep uplod pending");
-                                 await generateSalesReportPdf(context,value.todaySalesList);
-                                // IminPrintClass imp = IminPrintClass();
-                                // imp.printReport(value.todaySalesList, "sales");
-                              },
-                              icon: Icon(Icons.print),
-                            )
-                          ],
-                        ),
+                        SizedBox(height: 20),
+                        // Row(
+                        //   mainAxisAlignment: MainAxisAlignment.end,
+                        //   children: [
+                        //     IconButton(
+                        //       onPressed: () async {
+                        //         // PrintReport printer = PrintReport();
+                        //         // printer.printReport(
+                        //         //     value.todaySalesList, "sales");
+                        //         print("sale rep uplod pending");
+                        //          await generateSalesReportPdf(context,value.todaySalesList);
+                        //         // IminPrintClass imp = IminPrintClass();
+                        //         // imp.printReport(value.todaySalesList, "sales");
+                        //       },
+                        //       icon: Icon(Icons.print),
+                        //     )
+                        //   ],
+                        // ),
                         Container(
                           width: size.width,
                           child: DataTable(

@@ -18,8 +18,7 @@ Future<void> generateSalesBillPdf(
   final font = await PdfGoogleFonts.robotoCondensedRegular();
   double totout = bal + printSalesData["master"]["net_amt"];
   Size size = MediaQuery.of(context).size;
-
-
+  
   pdf.addPage(
     pw.Page(
       // pageTheme: pw.PageTheme(),

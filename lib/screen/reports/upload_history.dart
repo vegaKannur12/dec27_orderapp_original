@@ -76,18 +76,19 @@ class _UploadHistoryState extends State<UploadHistory> {
                     )
                   : Column(
                       children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            IconButton(
-                                onPressed: () {
-                                  PrintReport printer = PrintReport();
-                                  printer.printReport(
-                                      value.todaySalesList, "sales");
-                                },
-                                icon: Icon(Icons.print))
-                          ],
-                        ),
+                        SizedBox(height: 20),
+                        // Row(
+                        //   mainAxisAlignment: MainAxisAlignment.end,
+                        //   children: [
+                        //     IconButton(
+                        //         onPressed: () {
+                        //           PrintReport printer = PrintReport();
+                        //           printer.printReport(
+                        //               value.todaySalesList, "sales");
+                        //         },
+                        //         icon: Icon(Icons.print))
+                        //   ],
+                        // ),
                         Container(
                           width: size.width,
                           child: DataTable(

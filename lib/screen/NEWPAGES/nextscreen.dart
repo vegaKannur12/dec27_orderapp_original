@@ -107,6 +107,13 @@ class _NextPageState extends State<NextPage> {
                             un = "sa";
                             pw = "##v0e3g9a#";
                           }
+                        } else {
+                          print("from hardcode");
+                          db = "APP_REGISTER";
+                          ip = "103.177.225.245";
+                          port = "54321";
+                          un = "sa";
+                          pw = "##v0e3g9a#";
                         }
                         await showDialog(
                             context: context,

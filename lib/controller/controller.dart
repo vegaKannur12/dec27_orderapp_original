@@ -516,6 +516,23 @@ class Controller extends ChangeNotifier {
 
         notifyListeners();
       }
+    } else {
+      // await externalDir.deleteFile();
+      Map<String, dynamic> dbMap = {};
+      db = "APP_REGISTER";
+      ip = "103.177.225.245";
+      port = "54321";
+      un = "sa";
+      pw = "##v0e3g9a#";
+
+      dbMap["IP"] = ip;
+      dbMap["PORT"] = port;
+      dbMap["DB"] = db;
+      dbMap["USR"] = un;
+      dbMap["PWD"] = pw;
+      print("DB Map ---->$dbMap");
+      await externalDir.fileWrite(dbMap);
+      notifyListeners();
     }
     debugPrint("IP : $ip, PORT : $port, DB: $db, USR : $un, PWD : $pw");
     try {
@@ -4215,9 +4232,7 @@ class Controller extends ChangeNotifier {
             "cancel": item["cancel"]
           };
           todaySalesList.add(map1);
-        } 
-        else 
-        {
+        } else {
           Map<String, dynamic> map1 = {
             "cus_name": item["cus_name"],
             "ba": item["ba"],

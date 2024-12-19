@@ -12,73 +12,71 @@ Future<void> generateSalesReportPdf(
   //  =await
   //     Provider.of<Controller>(context, listen: false).todaySalesList;
   final font = await PdfGoogleFonts.robotoCondensedRegular();
+  final PdfColor whitecolor = PdfColors.white;
 
   final saleReportPdf = pw.Document();
   Size size = MediaQuery.of(context).size;
 
   saleReportPdf.addPage(pw.Page(
+    theme: pw.ThemeData(softWrap: true),
     // pageFormat: PdfPageFormat(200, 150),
     //  theme: pw.ThemeData(softWrap: true),
     //   // pageFormat:PdfPageFormat(144, 100),
     pageFormat: PdfPageFormat.roll80,
     build: (context) {
-      return pw.Padding(
-          padding: pw.EdgeInsets.only(bottom: 100), // Adds space at the bottom
-          child: pw.Column(
-              // mainAxisAlignment: pw.MainAxisAlignment.center,
-              crossAxisAlignment: pw.CrossAxisAlignment.start,
-              children: [
-                // pw.Center(
-                //   child: pw.Text(
-                //     'SALES REPORT',
-                //     style: pw.TextStyle(
-                //       fontSize: 20,
-                //       fontWeight: pw.FontWeight.bold,
-                //     ),
-                //   ),
-                // ),
-                pw.Row(
-                    mainAxisAlignment: pw.MainAxisAlignment.spaceEvenly,
-                    children: [
-                      pw.Text("BILL NO",
-                          style: pw.TextStyle(
-                              fontWeight: pw.FontWeight.bold,
-                              fontSize: 10,
-                              font: font)),
-                      pw.Text("DATE",
-                          style: pw.TextStyle(
-                              fontWeight: pw.FontWeight.bold,
-                              fontSize: 10,
-                              font: font)),
-                      pw.Text("AMOUNT",
-                          style: pw.TextStyle(
-                              fontWeight: pw.FontWeight.bold,
-                              fontSize: 10,
-                              font: font))
-                    ]),
-                pw.Divider(),
-
-                pw.SizedBox(
-                  // height: size.height,
-                  child: pw.ListView.builder(
-                      itemBuilder: (context, index) {
-                        return pw.Row(
-                            mainAxisAlignment: pw.MainAxisAlignment.spaceEvenly,
-                            children: [
-                              pw.Text(list[index]["sale_Num"],
-                                  style:
-                                      pw.TextStyle(fontSize: 10, font: font)),
-                              pw.Text(list[index]["Date"],
-                                  style:
-                                      pw.TextStyle(fontSize: 10, font: font)),
-                              pw.Text(list[index]["net_amt"].toString(),
-                                  style:
-                                      pw.TextStyle(fontSize: 10, font: font)),
-                            ]);
-                      },
-                      itemCount: list.length),
-                ),
-              ]));
+      return pw.Column(
+          // mainAxisAlignment: pw.MainAxisAlignment.center,
+          crossAxisAlignment: pw.CrossAxisAlignment.start,
+          children: [
+            // pw.Center(
+            //   child: pw.Text(
+            //     'SALES REPORT',
+            //     style: pw.TextStyle(
+            //       fontSize: 20,
+            //       fontWeight: pw.FontWeight.bold,
+            //     ),
+            //   ),
+            // ),
+            pw.Row(
+                mainAxisAlignment: pw.MainAxisAlignment.spaceEvenly,
+                children: [
+                  pw.Text("BILL NO",
+                      style: pw.TextStyle(
+                          fontWeight: pw.FontWeight.bold,
+                          fontSize: 10,
+                          font: font)),
+                  pw.Text("DATE",
+                      style: pw.TextStyle(
+                          fontWeight: pw.FontWeight.bold,
+                          fontSize: 10,
+                          font: font)),
+                  pw.Text("AMOUNT",
+                      style: pw.TextStyle(
+                          fontWeight: pw.FontWeight.bold,
+                          fontSize: 10,
+                          font: font))
+                ]),
+            pw.Divider(),
+            for (var index = 0; index < list.length; index++)
+              pw.Row(
+                  mainAxisAlignment: pw.MainAxisAlignment.spaceEvenly,
+                  children: [
+                    pw.Text(
+                      list[index]["sale_Num"],
+                      style: pw.TextStyle(fontSize: 10, font: font),
+                    ),
+                    pw.Text(
+                      list[index]["Date"],
+                      style: pw.TextStyle(fontSize: 10, font: font),
+                    ),
+                    pw.Text(
+                      list[index]["net_amt"].toString(),
+                      style: pw.TextStyle(fontSize: 10, font: font),
+                    ),
+                  ]),
+            pw.SizedBox(height: 20),
+            pw.Divider(),
+          ]);
     },
   ));
   await Printing.layoutPdf(

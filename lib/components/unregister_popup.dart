@@ -36,6 +36,7 @@ class Unreg {
         Navigator.pop(context);
       },
     );
+    
     // set up the AlertDialog
     AlertDialog alert = AlertDialog(
       title: Text("Do you want to unregister!!"),

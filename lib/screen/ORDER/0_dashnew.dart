@@ -589,7 +589,13 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin {
                                   "5" ||
                               Provider.of<Controller>(context, listen: false)
                                       .menu_index ==
-                                  "6"
+                                  "6" ||
+                              Provider.of<Controller>(context, listen: false)
+                                      .menu_index ==
+                                  "7"||
+                              Provider.of<Controller>(context, listen: false)
+                                      .menu_index ==
+                                  "8"
                           ? Colors.white
                           : P_Settings.wavecolor,
 
@@ -616,7 +622,13 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin {
                                   "5" ||
                               Provider.of<Controller>(context, listen: false)
                                       .menu_index ==
-                                  "6"
+                                  "6" ||
+                              Provider.of<Controller>(context, listen: false)
+                                      .menu_index ==
+                                  "7"||
+                              Provider.of<Controller>(context, listen: false)
+                                      .menu_index ==
+                                  "8"
                           ? TabBar(
                               isScrollable: true,
                               // indicator: BoxDecoration(
@@ -666,7 +678,13 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin {
                                       "5" ||
                                   Provider.of<Controller>(context, listen: false)
                                           .menu_index ==
-                                      "6"
+                                      "6" ||
+                              Provider.of<Controller>(context, listen: false)
+                                      .menu_index ==
+                                  "7"||
+                              Provider.of<Controller>(context, listen: false)
+                                      .menu_index ==
+                                  "8"
                               ? P_Settings.wavecolor
                               : Colors.white,
                         ),
