@@ -4229,7 +4229,8 @@ class Controller extends ChangeNotifier {
             "net_amt": item["grossTot"].abs(),
             "taxtot": item["taxtot"],
             "distot": item["distot"],
-            "cancel": item["cancel"]
+            "cancel": item["cancel"],
+            "address": item["address"],
           };
           todaySalesList.add(map1);
         } else {
@@ -4249,7 +4250,9 @@ class Controller extends ChangeNotifier {
             "net_amt": item["tot_aftr_disc"],
             "taxtot": item["taxtot"],
             "distot": item["distot"],
-            "cancel": item["cancel"]
+            "cancel": item["cancel"],
+            "address": item["address"],           
+
           };
           todaySalesList.add(map1);
         }
@@ -6310,7 +6313,7 @@ class Controller extends ChangeNotifier {
   printSales(
       String cid,
       BuildContext context,
-      Map<String, dynamic> salesMasterData,
+      Map<String, dynamic> salesMasterData,      
       String? areaName,
       String isCancelled,
       double balncfromsave) async {
@@ -6335,10 +6338,15 @@ class Controller extends ChangeNotifier {
     printSalesData["master"] = salesMasterData;
     printSalesData["detail"] = resultQuery;
     printSalesData["taxable_data"] = taxableData;
+
     print("result salesMasterData----$printSalesData");
     print("ba runtimetype------${printSalesData["master"]["ba"].runtimeType}");
+    print("result salesMasterData----$printSalesData");
+        print("TAXABLE data----$taxableData");
 
-    await generateSalesBillPdf(printSalesData, salesMasterData["payment_mode"],
+
+
+    await generateSalesBillPdf(printSalesData,taxableData, salesMasterData["payment_mode"] ,
         isCancelled, balncfromsave, context);
 
     // await setConnect("DC:0D:30:63:DB:A6");

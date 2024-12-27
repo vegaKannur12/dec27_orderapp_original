@@ -1404,7 +1404,7 @@ class OrderAppDB {
   Future insertStaffDetails(StaffDetails sdata) async {
     final db = await database;
     var query2 =
-        'INSERT INTO staffDetailsTable(sid, sname, uname, pwd,area,track) VALUES("${sdata.sid}", "${sdata.sname}", "${sdata.unme}", "${sdata.pwd}","${sdata.area}",${sdata.track})';
+        'INSERT INTO StaffDetailsTable(sid, sname, uname, pwd,area,track) VALUES("${sdata.sid}", "${sdata.sname}", "${sdata.unme}", "${sdata.pwd}","${sdata.area}",${sdata.track})';
     var res = await db.rawInsert(query2);
     print(query2);
     // print(res);
@@ -2819,7 +2819,7 @@ class OrderAppDB {
     else if (type == "sale report") 
     {
       query =
-          'select accountHeadsTable.hname as cus_name,accountHeadsTable.ba as ba, accountHeadsTable.ac_ad1 as address, accountHeadsTable.ac_gst as gstin, salesMasterTable.sales_id sales_id,salesMasterTable.rounding roundoff, salesMasterTable.os  || salesMasterTable.sales_id as sale_Num,salesMasterTable.customer_id Cus_id,salesMasterTable.salesdate   Date, count(salesDetailTable.row_num) count,salesMasterTable.gross_tot grossTot,salesMasterTable.payment_mode payment_mode,salesMasterTable.credit_option creditoption, salesMasterTable.tot_aftr_disc, salesMasterTable.tax_tot as taxtot, salesMasterTable.dis_tot as distot,salesMasterTable.cancel as cancel  from salesMasterTable inner join salesDetailTable on salesMasterTable.sales_id=salesDetailTable.sales_id inner join accountHeadsTable on accountHeadsTable.ac_code= salesMasterTable.customer_id where salesMasterTable.salesdate="${date}"  and salesMasterTable.cancel == 0 $condition group by salesMasterTable.sales_id';
+          'select accountHeadsTable.hname as cus_name,accountHeadsTable.ba as ba, accountHeadsTable.ac_ad1   as address, accountHeadsTable.ac_gst as gstin, salesMasterTable.sales_id sales_id,salesMasterTable.rounding roundoff, salesMasterTable.os  || salesMasterTable.sales_id as sale_Num,salesMasterTable.customer_id Cus_id,salesMasterTable.salesdate   Date, count(salesDetailTable.row_num) count,salesMasterTable.gross_tot grossTot,salesMasterTable.payment_mode payment_mode,salesMasterTable.credit_option creditoption, salesMasterTable.tot_aftr_disc, salesMasterTable.tax_tot as taxtot, salesMasterTable.dis_tot as distot,salesMasterTable.cancel as cancel  from salesMasterTable inner join salesDetailTable on salesMasterTable.sales_id=salesDetailTable.sales_id inner join accountHeadsTable on accountHeadsTable.ac_code= salesMasterTable.customer_id where salesMasterTable.salesdate="${date}"  and salesMasterTable.cancel == 0 $condition group by salesMasterTable.sales_id';
     } 
     else if (type == "Return report") 
     {
@@ -2915,7 +2915,7 @@ class OrderAppDB {
     List<Map<String, dynamic>> result;
     Database db = await instance.database;
     var query =
-        " select tax_per as tper , sum(gross_amount - dis_amt) as taxable,sum(cgst_amt) as cgst, sum(sgst_amt) as sgst, sum(tax_amt) as tax from salesDetailTable where sales_id=$salesId group by tax_per order by tax_per ";
+        " select tax_per as tper , sum(gross_amount - dis_amt) as taxable,sum(cgst_amt) as cgst, sum(sgst_amt) as sgst, sum(tax_amt) as tax from salesDetailTable  where sales_id=$salesId group by tax_per order by tax_per ";
     result = await db.rawQuery(query);
     print("taxable details------$result");
     if (result.length > 0) {
@@ -2984,7 +2984,7 @@ class OrderAppDB {
     } else {
       result = await db.rawQuery(query);
     }
-    print("result menu common----$result");
+    print("--$result");
     return result;
   }
 

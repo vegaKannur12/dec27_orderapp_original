@@ -17,7 +17,8 @@ Future<void> generateSalesReportPdf(
   final saleReportPdf = pw.Document();
   Size size = MediaQuery.of(context).size;
 
-  saleReportPdf.addPage(pw.Page(
+  saleReportPdf.addPage(
+    pw.Page(
     theme: pw.ThemeData(softWrap: true),
     // pageFormat: PdfPageFormat(200, 150),
     //  theme: pw.ThemeData(softWrap: true),

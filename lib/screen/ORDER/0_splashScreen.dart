@@ -69,7 +69,7 @@ class _SplashScreenState extends State<SplashScreen>
   
 
     await Future.delayed(Duration(seconds: 3), () async {
-      print("stored db details--->${temp}");
+      print("->${temp}");
       Navigator.push(
           context,
           PageRouteBuilder(

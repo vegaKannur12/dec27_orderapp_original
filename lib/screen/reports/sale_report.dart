@@ -81,17 +81,19 @@ class _SaleReportState extends State<SaleReport> {
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
                             IconButton(
-                                onPressed: () async {
-                                  print("sale rep)T"); 
-                                   await generateSalesReportPdf(context,value.todaySalesList);
-                                  // IminPrintClass imp=IminPrintClass();
-                                  // imp.printReport(value.todaySalesList, "sales");
-                                  
-                                  // PrintReport printer = PrintReport();
-                                  // printer.printReport(
-                                  //     value.todaySalesList, "sales");
-                                },
-                                icon: Icon(Icons.print),)
+                              onPressed: () async {
+                                print("sale rep)T");
+                                await generateSalesReportPdf(
+                                    context, value.todaySalesList);
+                                // IminPrintClass imp=IminPrintClass();
+                                // imp.printReport(value.todaySalesList, "sales");
+
+                                // PrintReport printer = PrintReport();
+                                // printer.printReport(
+                                //     value.todaySalesList, "sales");
+                              },
+                              icon: Icon(Icons.print),
+                            )
                           ],
                         ),
                         Container(
