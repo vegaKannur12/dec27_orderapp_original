@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:sqlorder24/components/BlueTotth%20print/r-pdfbill.dart';
 import 'package:sqlorder24/components/commoncolor.dart';
 import 'package:sqlorder24/controller/controller.dart';
 import 'package:sqlorder24/db_helper.dart';
@@ -421,7 +422,7 @@ class CommonPopup {
                                         // });
                                         // await EasyLoading.dismiss();
                                       },
-                                      child: Text("Yes"),
+                                      child: Text("Print"),
                                       style: ElevatedButton.styleFrom(
                                           backgroundColor:
                                               P_Settings.salewaveColor,
@@ -480,7 +481,7 @@ class CommonPopup {
 
                                         // Navigator.pop(context);
                                       },
-                                      child: Text("No"),
+                                      child: Text("Cancel"),
                                       style: ElevatedButton.styleFrom(
                                           backgroundColor:
                                               P_Settings.salewaveColor,
@@ -490,6 +491,7 @@ class CommonPopup {
                                     ),
                                   ],
                                 ),
+                               
 
                                 // Text(
                                 //   '$type  Placed!!!!',

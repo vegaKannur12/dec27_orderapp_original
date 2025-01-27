@@ -548,6 +548,7 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin {
                         if (value.isLoading) {
                           return LinearProgressIndicator(
                             backgroundColor: Colors.white,
+                            // color: Color.fromARGB(255, 134, 9, 107),
                             color: P_Settings.wavecolor,
 
                             // valueColor: new AlwaysStoppedAnimation<Color>(Colors.red),
@@ -879,7 +880,8 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin {
                         child: Row(
                           children: [
                             SizedBox(
-                              height: size.height * 0.07,
+                              height: 
+                              size.height * 0.07,
                               width: size.width * 0.03,
                             ),
                             Icon(

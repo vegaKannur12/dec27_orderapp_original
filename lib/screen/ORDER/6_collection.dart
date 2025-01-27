@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
+import 'package:sqlorder24/components/BlueTotth%20print/collection_print.dart';
 import 'package:sqlorder24/db_helper.dart';
 
 import 'package:provider/provider.dart';
@@ -227,12 +228,9 @@ class _CollectionPageState extends State<CollectionPage> {
                             height: size.height * 0.05,
                             alignment: Alignment.centerLeft,
                             color: P_Settings.collection,
-                            child: 
-                            Padding(
+                            child: Padding(
                               padding: const EdgeInsets.all(8.0),
-                              child: 
-                              Text(
-                                      value.balance.toString() == "null" ||
+                              child: Text(value.balance.toString() == "null" ||
                                       value.balance.toString() == ""
                                   ? "0.0"
                                   : value.balance.toString()),
@@ -391,8 +389,7 @@ class _CollectionPageState extends State<CollectionPage> {
                                     if (Provider.of<Controller>(context,
                                                 listen: false)
                                             .settingsList1[0]["set_value"] ==
-                                        "ONLINE") 
-                                    {
+                                        "ONLINE") {
                                       print("Direct save and upload");
                                       Provider.of<Controller>(context,
                                               listen: false)
@@ -477,6 +474,8 @@ class _CollectionPageState extends State<CollectionPage> {
                                     itemBuilder: (context, index) {
                                       return Container(
                                         // height: size.height * 0.1,
+                                        width: size.width * 0.1,
+
                                         child: Card(
                                           // shape: RoundedRectangleBorder(
                                           //   side: BorderSide(
@@ -502,6 +501,7 @@ class _CollectionPageState extends State<CollectionPage> {
                                                     .roundedButtonColor,
                                               ),
                                               title: Row(
+                                                // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                 children: [
                                                   Text(
                                                     value.fetchcollectionList[
@@ -521,40 +521,66 @@ class _CollectionPageState extends State<CollectionPage> {
                                               ),
                                               subtitle: Text(
                                                   "\u{20B9}${value.fetchcollectionList[index]['rec_amount'].toStringAsFixed(2)}"),
-                                              trailing: IconButton(
-                                                icon: Icon(Icons.delete,
-                                                    size: 16,
-                                                    color: value.fetchcollectionList[
-                                                                    index][
-                                                                'rec_cancel'] ==
-                                                            1
-                                                        ? Colors.grey
-                                                        : Colors.red[400]),
-                                                onPressed:
-                                                    value.fetchcollectionList[
-                                                                    index][
-                                                                "rec_cancel"] ==
-                                                            1
-                                                        ? null
-                                                        : () {
-                                                            showDialog(
-                                                                context:
-                                                                    context,
-                                                                builder: (BuildContext context) => popup.buildPopupDialog(
-                                                                    widget
-                                                                        .cuid!,
-                                                                    context,
-                                                                    "Cancel Collection?",
-                                                                    "collection",
-                                                                    value.fetchcollectionList[
+                                              trailing: SizedBox(
+                                                height: 200,
+                                                width: 70,
+                                                child: Row(
+                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                  children: [
+                                                    Expanded(
+                                                      child: IconButton(
+                                                        icon: Icon(Icons.delete,
+                                                            size: 16,
+                                                            color: value.fetchcollectionList[
                                                                             index]
                                                                         [
-                                                                        "rec_row_num"],
-                                                                    widget.sid!,
-                                                                    s[0],
-                                                                    widget
-                                                                        .aid!));
+                                                                        'rec_cancel'] ==
+                                                                    1
+                                                                ? Colors.grey
+                                                                : Colors
+                                                                    .red[400]),
+                                                        onPressed:
+                                                            value.fetchcollectionList[
+                                                                            index]
+                                                                        [
+                                                                        "rec_cancel"] ==
+                                                                    1
+                                                                ? null
+                                                                : () {
+                                                                    showDialog(
+                                                                        context:
+                                                                            context,
+                                                                        builder: (BuildContext context) => popup.buildPopupDialog(
+                                                                            widget.cuid!,
+                                                                            context,
+                                                                            "Cancel Collection?",
+                                                                            "collection",
+                                                                            value.fetchcollectionList[index]["rec_row_num"],
+                                                                            widget.sid!,
+                                                                            s[0],
+                                                                            widget.aid!));
+                                                                  },
+                                                      ),
+                                                    ),
+                                                   
+                                                    Expanded(
+                                                      child: IconButton(
+                                                          onPressed: () async {
+                                                                                                                  
+                                                            print("clicked");
+                                                            await generateCollectionPdf(
+                                                                context,
+                                                                value
+                                                                    .fetchcollectionList[
+                                                                        index][
+                                                                        "rec_row_num"]
+                                                                    .toString());
                                                           },
+                                                          icon: Icon(Icons
+                                                              .print_sharp)),
+                                                    )
+                                                  ],
+                                                ),
                                               ),
                                             ),
                                           ),

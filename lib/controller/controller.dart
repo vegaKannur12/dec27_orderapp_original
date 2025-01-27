@@ -11,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:sql_conn/sql_conn.dart';
 import 'package:sqlorder24/components/BlueTotth%20print/2blutoothPrint.dart';
 import 'package:sqlorder24/components/BlueTotth%20print/blutooth.dart';
+import 'package:sqlorder24/components/BlueTotth%20print/collection_print.dart';
 import 'package:sqlorder24/components/BlueTotth%20print/pdfbill.dart';
 import 'package:sqlorder24/components/BlueTotth%20print/r-pdfbill.dart';
 import 'package:sqlorder24/components/customSnackbar.dart';
@@ -64,6 +65,8 @@ class Controller extends ChangeNotifier {
   bool prNullvalue = false;
   Map<String, dynamic> printSalesData = {};
   Map<String, dynamic> printReturnData = {};
+  Map<String, dynamic> printCollectionData = {};
+
   List prUnitSaleListData2 = [];
   double disc_amt = 0.0;
   double net_amt = 0.0;
@@ -105,6 +108,10 @@ class Controller extends ChangeNotifier {
   String? selectedUnit;
   CustomSnackbar snackbar = CustomSnackbar();
   bool isSearch = false;
+  bool isitemloading=false;
+  bool isCustomerSearch = false;
+
+
   bool isreportSearch = false;
   String? areaId;
   bool flag = false;
@@ -125,6 +132,8 @@ class Controller extends ChangeNotifier {
   List<bool> selected = [];
   List<bool> isDown = [];
   List<bool> isUp = [];
+  List<bool>cliclCntl=[];
+  List<TextEditingController>csmerNameCnrl=[];
 
   List<bool> saleItemselected = [];
 
@@ -246,6 +255,9 @@ class Controller extends ChangeNotifier {
   List<Map<String, dynamic>> listWidget = [];
   List<TextEditingController> controller = [];
   List<TextEditingController> qty = [];
+    List<TextEditingController> cstm = [];
+    List<bool> isAdded = [];
+
   String? dfcusCode;
   String? dfCusName;
   String? br_id;
@@ -299,6 +311,10 @@ class Controller extends ChangeNotifier {
   List<Map<String, dynamic>> areaList = [];
   List<Map<String, dynamic>> companyList = [];
   List<Map<String, dynamic>> customerList = [];
+    List<Map<String, dynamic>> searchcsmrList = [];
+
+  List<Map<String, dynamic>> filterdList = [];
+
   List<Map<String, dynamic>> todayOrderList = [];
   List<Map<String, dynamic>> todayCollectionList = [];
   List<Map<String, dynamic>> todaySalesList = [];
@@ -756,7 +772,7 @@ class Controller extends ChangeNotifier {
       print("An unexpected error occurred: $e");
     }
   }
-
+///////////////////////////////////////////////////////////////////
   getbranchlist(BuildContext context) async {
     try {
       var res = await SqlConn.readData("flt_POS_getbranchlist");
@@ -800,7 +816,7 @@ class Controller extends ChangeNotifier {
       print("An unexpected error occurred: $e");
     }
   }
-
+////////////////////////////////////////////////////////////////////////
   generateSalesInvoice(BuildContext context) async {
     try {
       var res = await SqlConn.readData("FLT_GENERATE_SALES_INVOICE");
@@ -828,7 +844,7 @@ class Controller extends ChangeNotifier {
       print("An unexpected error occurred: $e");
     }
   }
-
+//////////////////////////
   initSecondaryDb(BuildContext context) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? db = prefs.getString("conDb");
@@ -1307,7 +1323,7 @@ class Controller extends ChangeNotifier {
             print("stock----${stok.length}");
             stk = StockDetails.fromJson(stok);
             var stkkdet = await OrderAppDB.instance.insertStockDetails(stk);
-            print("inserted stock ${stkkdet}");
+            print("inserted stock to table  ${stkkdet}");
           }
 
           await OrderAppDB.instance
@@ -1602,7 +1618,34 @@ class Controller extends ChangeNotifier {
         } else {
           print("empty---[]");
         }
-        ////////////////////////////////////
+        
+        ///////////////////////////SYSTEM SETTINGS ///////////////////////////////
+        //  var res10  = await SqlConn.readData(
+        //     "FLT_GET_MASTER_DATA 'settings','$branch_id'");
+        // List<dynamic> map10 = jsonDecode(res10);
+        // print("Master details----COMPANYINFO------${res10.runtimeType}");
+        // print("Master details-----COMPANYINFO----${res10}");
+        // print("Master decodedRespons---COMPANYINFO ${map10}");
+        // if (map10.isNotEmpty) {
+        //   await OrderAppDB.instance
+        //       .deleteFromTableCommonQuery("settingsTable", "");
+        //   SettingsModel settingsModal;
+        //   // walletModal.
+        //   for (var item in map10) {
+        //     // print("object-1-${item["set_id"].runtimeType}");
+        //     // print("object-2-${item["set_code"].runtimeType}");
+        //     // print("object-3-${item["set_value"].runtimeType}");
+        //     //print("object-4-${item["set_type"].runtimeType}");
+        //     settingsModal = SettingsModel.fromJson(item);
+        //     await OrderAppDB.instance.insertsettingsTable(settingsModal);
+        //   }
+        // } else {
+        //   print("empty---[]");
+        // }
+
+        /// ///////////////////////////stock///////////////////////////////
+         
+
         if (page == "all") {
           isDownloaded = false;
           isDown[index] = true;
@@ -3233,9 +3276,9 @@ class Controller extends ChangeNotifier {
   }
 
   /////////////////////GET CUSTOMER////////////////////////////////
-  getCustomer(String? aid, BuildContext context) async {
+  getCustomer(String? aid, String? cid, BuildContext context) async {
     String arid;
-    print("aid...............${aid}");
+    print("aid...............${aid}.........$cid");
     try {
       isLoading = true;
       notifyListeners();
@@ -3250,7 +3293,7 @@ class Controller extends ChangeNotifier {
         } else {
           arid = aid;
         }
-        customerList = await OrderAppDB.instance.getCustomer(arid);
+        customerList = await OrderAppDB.instance.getCustomer(arid,cid);
         print("customerList----${customerList}");
         for (var item in customerList) {
           custmerDetails.add(item);
@@ -3267,11 +3310,23 @@ class Controller extends ChangeNotifier {
         } else {
           arid = aid;
         }
-        customerList = await OrderAppDB.instance.getCustomer(arid);
+        customerList = await OrderAppDB.instance.getCustomer(arid,cid);
         print("customerList----${customerList}");
         for (var item in customerList) {
           custmerDetails.add(item);
         }
+        csmerNameCnrl=List.generate(custmerDetails.length,(index) => TextEditingController(), );
+        cliclCntl=List.generate(custmerDetails.length, (index) => false,);
+        for(int i=0;i<custmerDetails.length;i++){
+          csmerNameCnrl[i].text=custmerDetails[i]["hname"];
+        }
+        isCustomerSearch=false;
+
+        isitemloading=false;
+        isSearch=false;
+        qty = List.generate(customerList.length, (index) => TextEditingController());
+    
+
         print("custmr length----${custmerDetails.length}");
         print("custmerDetails adding $custmerDetails");
         notifyListeners();
@@ -3285,15 +3340,32 @@ class Controller extends ChangeNotifier {
       return null;
     }
   }
+ /////////////////////////////////search customer
+    
+    searchCustomerList(String search){
+      List<Map<String, dynamic>> result1 = [];
+      if(search.isNotEmpty){
+       isCustomerSearch =true;
+       notifyListeners();
+       searchcsmrList=custmerDetails.where((e) => 
+    e["hname"].toLowerCase().contains(search.toLowerCase()) &&
+              e["hname"].toLowerCase().startsWith(search.toLowerCase()))
+          .toList();
+          for(var item in result1){
+            result1.add(item);
+          }
+    
+      }
+      else{
+        isCustomerSearch =false;
+       notifyListeners();
+      searchcsmrList=custmerDetails;
 
-  ////////////////////////////////////////
-  setCustomerName(String? cusName) {
-    customer_Name = cusName;
-    print("customer name.controller...$cusName..$customer_Name");
-    boolCustomerSet = true;
-    notifyListeners();
-  }
-
+    
+       print("search customer list============$searchcsmrList");
+      }
+      notifyListeners();
+    }
   //////////////////////GET PRODUCT LIST/////////////////////////////////
   getProductList(String customerId) async {
     print("haii---");
@@ -5078,6 +5150,8 @@ class Controller extends ChangeNotifier {
       int itemrid;
       String itembillno;
       notifyListeners();
+
+
       var result = await OrderAppDB.instance.selectSaleReturnMasterTable();
       String jsonE = jsonEncode(result);
       var jsonMstr = jsonDecode(jsonE);
@@ -6449,10 +6523,10 @@ class Controller extends ChangeNotifier {
     printReturnData["master"] = returnMasterData;
     printReturnData["detail"] = resultQuery;
     printReturnData["taxable_data"] = taxableData;
-    print("result salesMasterData----$printReturnData");
+    print("result returnMasterData----$printReturnData");
     // print("ba runtimetype------${printSalesData["master"]["ba"].runtimeType}");
 
-    await generateReturnBillPdf(printReturnData,
+    await generateReturnBillPdf(printReturnData,taxableData,
         returnMasterData["payment_mode"], isCancelled, context);
 
     if (areaName != null && areaName.isNotEmpty && areaName != " ") {
@@ -6621,9 +6695,39 @@ class Controller extends ChangeNotifier {
               "selected- rateid= $rateid--${salesitemListdata2[i]["pkg"]}-----${salesitemListdata2[i]["rate3"]}");
           calculatedRate = salesitemListdata2[i]["pkg"] *
               double.parse(salesitemListdata2[i]["rate3"]);
+        } else if (rateid == 8) {
+          print(
+              "selected- rateid= $rateid--${salesitemListdata2[i]["pkg"]}-----${salesitemListdata2[i]["MRP"]}");
+          calculatedRate = salesitemListdata2[i]["pkg"] *
+              double.parse(salesitemListdata2[i]["mrp"]);      
+        } else if (rateid == 9) {
+          print(
+              "selected- rateid= $rateid--${salesitemListdata2[i]["pkg"]}-----${salesitemListdata2[i]["rate4"]}");
+          calculatedRate = salesitemListdata2[i]["pkg"] *
+              double.parse(salesitemListdata2[i]["rate4"]);
+         } else if (rateid == 10) {
+          print(
+              "selected- rateid= $rateid--${salesitemListdata2[i]["pkg"]}-----${salesitemListdata2[i]["rate5"]}");
+          calculatedRate = salesitemListdata2[i]["pkg"] *
+              double.parse(salesitemListdata2[i]["rate5"]);  
+        } else if (rateid == 11) {
+          print("selected- rateid= $rateid--${salesitemListdata2[i]["pkg"]}-----${salesitemListdata2[i]["rate6"]}");
+          calculatedRate = salesitemListdata2[i]["pkg"] *
+              double.parse(salesitemListdata2[i]["rate6"]);   
+        } else if (rateid == 12) {
+          print("selected- rateid= $rateid--${salesitemListdata2[i]["pkg"]}-----${salesitemListdata2[i]["rate7"]}");
+          calculatedRate = salesitemListdata2[i]["pkg"] *
+              double.parse(salesitemListdata2[i]["rate7"]);  
+        } else if (rateid == 13) {
+          print("selected- rateid= $rateid--${salesitemListdata2[i]["pkg"]}-----${salesitemListdata2[i]["rate8"]}");
+          calculatedRate = salesitemListdata2[i]["pkg"] *
+              double.parse(salesitemListdata2[i]["rate8"]);   
+         } else if (rateid == 14) {
+          print("selected- rateid= $rateid--${salesitemListdata2[i]["pkg"]}-----${salesitemListdata2[i]["rate9"]}");
+          calculatedRate = salesitemListdata2[i]["pkg"] *
+              double.parse(salesitemListdata2[i]["rate9"]);  
         }
         salesrate_X001[index].text = calculatedRate.toString();
-
         notifyListeners();
       }
     }
@@ -6707,4 +6811,39 @@ class Controller extends ChangeNotifier {
 
     notifyListeners();
   }
+
+  
+  searchItem(String val) {
+    filterdList = customerList;
+    if (val.isNotEmpty) {
+      isSearch = true;
+      notifyListeners();
+
+      filterdList = customerList
+          .where((e) => e["hname"]
+              .toString()
+              .trimLeft()
+              .toLowerCase()
+              .contains(val.toLowerCase()))
+          .toList();
+    } else {
+      isSearch = false;
+      notifyListeners();
+      filterdList = customerList;
+    }
+
+    // }
+    print("filtered_ITEM_List----------------$filterdList");
+    notifyListeners();
+  }
+
+  
+// printCollection( String cid,BuildContext context,)async{
+//       List<Map<String, dynamic>> companyData = [];
+//   companyData =
+//         await OrderAppDB.instance.selectAllcommon('registrationTable', "");
+//         printCollectionData["company"]=companyData;
+//         await generateCollectionPdf(context, fetchcollectionList, todayCollectionList);
+// }
 }
+

@@ -5,7 +5,7 @@ import 'package:sqlorder24/components/commoncolor.dart';
 import 'package:sqlorder24/components/customSnackbar.dart';
 import 'package:sqlorder24/controller/controller.dart';
 import 'package:sqlorder24/db_helper.dart';
-import 'package:sqlorder24/screen/ORDER/1_companyRegistrationScreen.dart';
+// import 'package:sqlorder24/screen/ORDER/1_companyRegistrationScreen.dart';
 import 'package:sqlorder24/screen/ORDER/externalDir.dart';
 import 'package:sqlorder24/service/tableList.dart';
 

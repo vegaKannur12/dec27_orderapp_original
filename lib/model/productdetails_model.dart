@@ -17,6 +17,11 @@ class ProductDetails {
   String? rate3;
   String? rate4;
   String? priceFlag;
+  String? rate5;
+  String? rate6;
+  String? rate7;
+  String? rate8;
+  String? rate9;
 
   ProductDetails(
       {this.code,
@@ -36,7 +41,13 @@ class ProductDetails {
       this.rate2,
       this.rate3,
       this.rate4,
-      this.priceFlag});
+      this.priceFlag,
+      this.rate5,
+      this.rate6,
+      this.rate7,
+      this.rate8,
+      this.rate9,
+      });
 
   ProductDetails.fromJson(Map<String, dynamic> json) {
     code = json['code'].toString().trimLeft();
@@ -56,6 +67,11 @@ class ProductDetails {
     rate2 = json['rate2'].toString().trimLeft();
     rate3 = json['rate3'].toString().trimLeft();
     rate4 = json['rate4'].toString().trimLeft();
+    rate5 = json['rate4'].toString().trimLeft();
+    rate6 = json['rate4'].toString().trimLeft();
+    rate7 = json['rate4'].toString().trimLeft();
+    rate8 = json['rate4'].toString().trimLeft();
+    rate9 = json['rate4'].toString().trimLeft();
     priceFlag = json['price_flag'].toString().trimLeft();
   }
 
@@ -78,6 +94,11 @@ class ProductDetails {
     data['rate2'] = this.rate2;
     data['rate3'] = this.rate3;
     data['rate4'] = this.rate4;
+    data['rate5'] = this.rate5;
+    data['rate6'] = this.rate6;
+    data['rate7'] = this.rate7;
+    data['rate8'] = this.rate8;
+    data['rate9'] = this.rate9;
     data['price_flag'] = this.priceFlag;
     return data;
   }

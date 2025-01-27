@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter/material.dart';
+import 'package:number_to_indian_words/number_to_indian_words.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
@@ -16,11 +17,18 @@ Future<void> generateSalesBillPdf(
     double bal,
     BuildContext context) async {
   final pdf = pw.Document();
+  // final font = await PdfGoogleFonts.robotoFlexRegular();
+
   final font = await PdfGoogleFonts.robotoCondensedRegular();
   final font1 = await PdfGoogleFonts.robotoBlack();
 
   double totout = bal + printSalesData["master"]["net_amt"];
   Size size = MediaQuery.of(context).size;
+
+  double netAmount =
+      double.parse(printSalesData["master"]["net_amt"].toStringAsFixed(2));
+  String netAmountInWords =
+      NumToWords.convertNumberToIndianWords(netAmount.toInt());
 
   pdf.addPage(
     pw.Page(
@@ -100,6 +108,13 @@ Future<void> generateSalesBillPdf(
               ),
             ),
 
+            //  pw.Container(
+            //   child: pw.Text(
+            //     '  ${printSalesData["master"]["address"]}          . ',
+            //     style: pw.TextStyle(fontWeight: pw.FontWeight.bold, font: font),
+            //   ),
+            // ),
+
             pw.FittedBox(
               child: pw.Text(
                 '  ${printSalesData["master"]["address"]}          . ',
@@ -131,7 +146,7 @@ Future<void> generateSalesBillPdf(
                     child: pw.Text('Item',
                         style: pw.TextStyle(
                             fontWeight: pw.FontWeight.bold,
-                            font: font,
+                            font: font1,
                             fontSize: 10),
                         overflow: pw.TextOverflow.clip)),
 
@@ -140,8 +155,8 @@ Future<void> generateSalesBillPdf(
                       textAlign: pw.TextAlign.end,
                       style: pw.TextStyle(
                           fontWeight: pw.FontWeight.bold,
-                          font: font,
-                          fontSize: 8)),
+                          font: font1,
+                          fontSize: 10)),
                 ),
 
                 pw.Expanded(
@@ -153,8 +168,8 @@ Future<void> generateSalesBillPdf(
                           textAlign: pw.TextAlign.end,
                           style: pw.TextStyle(
                               fontWeight: pw.FontWeight.bold,
-                              font: font,
-                              fontSize: 8)),
+                              font: font1,
+                              fontSize: 10)),
                 ),
                 // pw.SizedBox(width: 10),
                 // pw.SizedBox(
@@ -165,7 +180,7 @@ Future<void> generateSalesBillPdf(
                       textAlign: pw.TextAlign.end,
                       style: pw.TextStyle(
                           fontWeight: pw.FontWeight.bold,
-                          font: font,
+                          font: font1,
                           fontSize: 8)),
                 ),
                 // pw.SizedBox(width: 10),
@@ -177,11 +192,48 @@ Future<void> generateSalesBillPdf(
                       textAlign: pw.TextAlign.end,
                       style: pw.TextStyle(
                           fontWeight: pw.FontWeight.bold,
-                          font: font,
-                          fontSize: 8)),
+                          font: font1,
+                          fontSize: 10)),
                 )
               ],
             ),
+            pw.SizedBox(height: 10),
+            pw.Row(
+                mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                children: [
+                  pw.Expanded(
+                    flex: 2,
+                    child: pw.Text("HSN",
+                        style: pw.TextStyle(fontSize: 8, font: font)),
+                  ),
+                  pw.SizedBox(
+                    width: 10,
+                  ),
+                  pw.Expanded(
+                    child: pw.Text("URATE",
+                        // textAlign: pw.TextAlign.end,
+                        style: pw.TextStyle(fontSize: 8, font: font)),
+                  ),
+                  //  pw.SizedBox(
+                  //   width: 5,
+                  // ),
+                  pw.Expanded(
+                    child: pw.Text("NETRATE",
+                        textAlign: pw.TextAlign.end,
+                        style: pw.TextStyle(fontSize: 8, font: font)),
+                  ),
+
+                  pw.Expanded(
+                    child: pw.Text("CGST",
+                        textAlign: pw.TextAlign.end,
+                        style: pw.TextStyle(fontSize: 8, font: font)),
+                  ),
+                  pw.Expanded(
+                    child: pw.Text("SGST",
+                        textAlign: pw.TextAlign.end,
+                        style: pw.TextStyle(fontSize: 8, font: font)),
+                  ),
+                ]),
 
             pw.Divider(),
             // Table Content
@@ -196,7 +248,7 @@ Future<void> generateSalesBillPdf(
                           flex: 2,
                           child: pw.Text(item["item"],
                               overflow: pw.TextOverflow.clip,
-                              style: pw.TextStyle(font: font, fontSize: 8))),
+                              style: pw.TextStyle(font: font, fontSize: 10))),
                       //  pw.SizedBox(
                       //   width: 30,
                       //   child:
@@ -234,23 +286,52 @@ Future<void> generateSalesBillPdf(
                     ]),
                     pw.SizedBox(height: 5),
                     pw.Row(
-                        // mainAxisAlignment: pw.MainAxisAlignment.spaceEvenly,
-                        crossAxisAlignment: pw.CrossAxisAlignment.start,
+                        mainAxisAlignment: pw.MainAxisAlignment.spaceEvenly,
+                        // crossAxisAlignment: pw.CrossAxisAlignment.start,
                         children: [
-                          pw.Text(
-                            'U_RATE: ' +
-                                item["unit_rate"].toStringAsFixed(2) +
-                                '       NET:' +
-                                item["gross"].toStringAsFixed(2) +
-                                '       CGST:' +
-                                item["cgst_amt"].toStringAsFixed(2) +
-                                '       SGST:' +
-                                item["sgst_amt"].toStringAsFixed(2) +
-                                ' ',
-                            style: pw.TextStyle(
-                                fontWeight: pw.FontWeight.bold,
-                                fontSize: 7,
-                                font: font),
+                          // pw.Text(
+                          //   item["unit_rate"].toStringAsFixed(2) +
+                          //       '       NET:' +
+                          //       item["gross"].toStringAsFixed(2) +
+                          //       '       CGST:' +
+                          //       item["cgst_amt"].toStringAsFixed(2) +
+                          //       '       SGST:' +
+                          //       item["sgst_amt"].toStringAsFixed(2) +
+                          //       ' ',
+                          //   style: pw.TextStyle(
+                          //       fontWeight: pw.FontWeight.bold,
+                          //       fontSize: 7,
+                          //       font: font),
+                          // ),
+                          pw.Expanded(
+                            flex: 3,
+                            child: pw.Text(item["hsn"].toString(),
+                                style: pw.TextStyle(fontSize: 8)),
+                          ),
+                          pw.Expanded(
+                            child: pw.Text(item["unit_rate"].toStringAsFixed(2),
+                                // textAlign: pw.TextAlign.end,
+                                style: pw.TextStyle(fontSize: 7)),
+                          ),
+                          pw.SizedBox(width: 2),
+
+                          pw.Expanded(
+                            child: pw.Text(item["gross"].toStringAsFixed(2),
+                                textAlign: pw.TextAlign.end,
+                                style: pw.TextStyle(fontSize: 7)),
+                          ),
+                          pw.SizedBox(width: 2),
+
+                          pw.Expanded(
+                            child: pw.Text(item["cgst_amt"].toStringAsFixed(2),
+                                textAlign: pw.TextAlign.end,
+                                style: pw.TextStyle(fontSize: 7)),
+                          ),
+                          pw.SizedBox(width: 2),
+                          pw.Expanded(
+                            child: pw.Text(item["sgst_amt"].toStringAsFixed(2),
+                                textAlign: pw.TextAlign.end,
+                                style: pw.TextStyle(fontSize: 7)),
                           ),
                         ]),
                     pw.Row(
@@ -283,6 +364,7 @@ Future<void> generateSalesBillPdf(
                         fontSize: 10,
                         font: font)),
                 pw.Text(printSalesData["master"]["net_amt"].toStringAsFixed(2),
+                    // pw.Text(netAmountInWords,
                     style: pw.TextStyle(
                         fontWeight: pw.FontWeight.bold,
                         fontSize: 10,
@@ -305,7 +387,7 @@ Future<void> generateSalesBillPdf(
                             font: font,
                             fontSize: 8),
                         overflow: pw.TextOverflow.clip)),
-                pw.Expanded(                 
+                pw.Expanded(
                   child: pw.Text('TAXBLE AMT',
                       textAlign: pw.TextAlign.end,
                       style: pw.TextStyle(
@@ -353,43 +435,37 @@ Future<void> generateSalesBillPdf(
                 mainAxisAlignment: pw.MainAxisAlignment.spaceEvenly,
                 children: [
                   pw.Expanded(
-                    flex: 1,
-                    child: pw.Text(item1["tper"].toString(),
+                      flex: 1,
+                      child: pw.Text(item1["tper"].toString(),
+                          style: pw.TextStyle(
+                              fontWeight: pw.FontWeight.bold,
+                              font: font,
+                              fontSize: 8),
+                          overflow: pw.TextOverflow.clip)),
+                  pw.Expanded(
+                    child: pw.Text(item1["taxable"].toStringAsFixed(2),
+                        textAlign: pw.TextAlign.end,
                         style: pw.TextStyle(
                             fontWeight: pw.FontWeight.bold,
                             font: font,
-                            fontSize: 8),
-                        overflow: pw.TextOverflow.clip)),
-                pw.Expanded(                
-                  child: pw.Text(item1["taxable"].toStringAsFixed(2),
-                      textAlign: pw.TextAlign.end,
-                      style: pw.TextStyle(
-                          fontWeight: pw.FontWeight.bold,
-                          font: font,
-                          fontSize: 8)),
-                ),
-                pw.Expanded(
-                  child: pw.Text(item1["cgst"].toStringAsFixed(2),
-                      textAlign: pw.TextAlign.end,
-                      style: pw.TextStyle(
-                          fontWeight: pw.FontWeight.bold,
-                          font: font,
-                          fontSize: 8)),
-                ),
-                pw.Expanded(
-                  child: pw.Text(item1["sgst"].toStringAsFixed(2),
-                      textAlign: pw.TextAlign.end,
-                      style: pw.TextStyle(
-                          fontWeight: pw.FontWeight.bold,
-                          font: font,
-                          fontSize: 8)),
-                ),
-
-
-
-
-
-
+                            fontSize: 8)),
+                  ),
+                  pw.Expanded(
+                    child: pw.Text(item1["cgst"].toStringAsFixed(2),
+                        textAlign: pw.TextAlign.end,
+                        style: pw.TextStyle(
+                            fontWeight: pw.FontWeight.bold,
+                            font: font,
+                            fontSize: 8)),
+                  ),
+                  pw.Expanded(
+                    child: pw.Text(item1["sgst"].toStringAsFixed(2),
+                        textAlign: pw.TextAlign.end,
+                        style: pw.TextStyle(
+                            fontWeight: pw.FontWeight.bold,
+                            font: font,
+                            fontSize: 8)),
+                  ),
 
                   // pw.Text(item1["tper"].toString()),
                   // pw.Text(item1["taxable"].toStringAsFixed(2)),
@@ -400,9 +476,7 @@ Future<void> generateSalesBillPdf(
               );
             }).toList(),
 
-
-
-             pw.Row(
+            pw.Row(
                 // mainAxisAlignment: pw.MainAxisAlignment.spaceEvenly,
                 crossAxisAlignment: pw.CrossAxisAlignment.start,
                 children: [
@@ -415,7 +489,7 @@ Future<void> generateSalesBillPdf(
                   )
                 ]),
 
-             pw.SizedBox(height: 5),
+            pw.SizedBox(height: 5),
             // Salesman and Outstanding Balance
             pw.Row(
               mainAxisAlignment: pw.MainAxisAlignment.start,
@@ -448,9 +522,11 @@ Future<void> generateSalesBillPdf(
     onLayout: (PdfPageFormat format) async => pdf.save(),
   );
   //   // Save PDF to local storage
-  // final filePath = await savePdfToLocal(pdf);
+  final filePath = await savePdfToLocal(pdf);
   // // Share the PDF
   // await sharePdfToWhatsApp(filePath, "5666663344");
+
+  await sharePdfWithSharePlus(filePath);
 }
 
 Future<String> savePdfToLocal(pw.Document pdf) async {

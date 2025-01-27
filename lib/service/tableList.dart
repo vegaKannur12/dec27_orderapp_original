@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sql_conn/sql_conn.dart';
 import 'package:sqlorder24/db_helper.dart';
@@ -55,6 +56,39 @@ class _TableListState extends State<TableList> {
       appBar: AppBar(
         title: Text("List Of tables"),
         actions: [
+          IconButton(
+            onPressed: () {
+              print("recreate starts");
+              showDialog(
+                context: context,
+                builder: (context) {
+                  return AlertDialog(
+                    content: Text("Do you want to Update!"),
+                    actions: [
+                      TextButton(
+                          onPressed: () {
+                            OrderAppDB.instance.recreate_Table();
+                            Fluttertoast.showToast(
+                                msg: "UPDATED SUCCESSFULLY",
+                                gravity: ToastGravity.CENTER,
+                                backgroundColor: Colors.green);
+                            Navigator.pop(context);
+                          },
+                          child: Text("YES")),
+                      TextButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          child: Text("NO"))
+                    ],
+                  );
+                },
+              );
+              // OrderAppDB.instance.recreate_Table();
+            },
+            icon: Icon(Icons.data_saver_on_rounded),
+            color: Colors.green[800],
+          ),
           Padding(
             padding: EdgeInsets.only(right: 25, top: 12),
             child: GestureDetector(

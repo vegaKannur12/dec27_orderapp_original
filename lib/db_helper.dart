@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:sqlorder24/model/2_registration_model.dart';
 
 import 'package:sqlorder24/model/accounthead_model.dart';
@@ -114,6 +115,11 @@ class OrderAppDB {
   static final rate2 = 'rate2';
   static final rate3 = 'rate3';
   static final rate4 = 'rate4';
+  static final rate5 = 'rate5';
+  static final rate6 = 'rate6';
+  static final rate7 = 'rate7';
+  static final rate8 = 'rate8';
+  static final rate9 = 'rate9';
   static final priceflag = 'priceflag';
 
   ////////////////prooduct category///////////////
@@ -266,7 +272,6 @@ class OrderAppDB {
   static final qtydmg = 'qtydmg';
 
   Future<Database> get database async {
-    print("bjhs");
     if (_database != null) return _database!;
     _database = await _initDB("marsproducts.db");
     return _database!;
@@ -430,9 +435,13 @@ class OrderAppDB {
             $rate2 TEXT,
             $rate3 TEXT,
             $rate4 TEXT,
-            $priceflag TEXT
-
-          )
+            $priceflag TEXT,
+            $rate5 TEXT,
+            $rate6 TEXT,
+            $rate7 TEXT,
+            $rate8 TEXT,
+            $rate9 TEXT
+            )
           ''');
     //////////////////////////products category////////////////////
     await db.execute('''
@@ -753,6 +762,9 @@ class OrderAppDB {
 
           )
           ''');
+
+    //  await db.execute('''alter table  returnMasterTable add rflag INTEGER ''');
+
     await db.execute('''
           CREATE TABLE returnDetailTable (
             $id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -804,6 +816,232 @@ class OrderAppDB {
           ''');
   }
 
+  Future recreate_Table() async {
+    final db = await database;
+    await db.execute('''DROP TABLE IF EXISTS productDetailsTable ''');
+    await db.execute('''
+          CREATE TABLE productDetailsTable (
+            $id INTEGER PRIMARY KEY AUTOINCREMENT,
+            $pid INTEGER,
+            $code TEXT NOT NULL,
+            $ean TEXT,
+            $item TEXT,
+            $unit TEXT,
+            $categoryId TEXT,
+            $companyId TEXT,
+            $stock TEXT,
+            $hsn TEXT,
+            $tax TEXT,
+            $prate TEXT,
+            $mrp TEXT,
+            $cost TEXT,
+            $rate1 TEXT,
+            $rate2 TEXT,
+            $rate3 TEXT,
+            $rate4 TEXT,
+            $priceflag TEXT,
+            $rate5 TEXT,
+            $rate6 TEXT,
+            $rate7 TEXT,
+            $rate8 TEXT,
+            $rate9 TEXT
+            )
+          ''');
+    print("Product details recreated");
+
+
+
+    await db.execute('''DROP TABLE IF EXISTS salesMasterTable  ''');
+    await db.execute('''
+          CREATE TABLE salesMasterTable (
+            $id INTEGER PRIMARY KEY AUTOINCREMENT,
+            $sales_id INTEGER,
+            $salesdate TEXT,
+            $salestime TEXT,
+            $os TEXT NOT NULL,
+            $cus_type TEXT,
+            $bill_no TEXT,
+            $customer_id TEXT,
+            $staff_id TEXT,
+            $areaid TEXT,
+            $total_qty INTEGER,
+            $payment_mode TEXT,
+            $credit_option TEXT,
+            $gross_tot REAL,
+            $dis_tot REAL,
+            $tax_tot REAL,
+            $ces_tot REAL,
+            $rounding REAL,
+            $net_amt REAL,
+            $state_status INTEGER,
+            $status INTEGER,
+            $cancel INTEGER,
+            $cancel_staff TEXT,
+            $cancel_dateTime TEXT,
+            $cashdisc_per REAL,
+            $cashdisc_amt REAL,
+            $tot_aftr_disc REAL,
+            $brrid TEXT,
+            $sflag INTEGER
+          )
+          ''');
+
+    print("salesMasterTable recreated");
+
+
+await db.execute('''DROP TABLE IF EXISTS salesDetailTable  ''');
+
+await db.execute('''
+          CREATE TABLE salesDetailTable (
+            $id INTEGER PRIMARY KEY AUTOINCREMENT,
+            $os TEXT NOT NULL,
+            $sales_id INTEGER,
+            $row_num INTEGER,
+            $hsn TEXT,
+            $item_name TEXT,
+            $code TEXT,
+            $qty INTEGER,
+            $unit TEXT,
+            $gross_amount REAL,
+            $dis_amt REAL,
+            $dis_per REAL,
+            $tax_amt REAL,
+            $tax_per REAL,
+            $cgst_per REAL,
+            $cgst_amt REAL,
+            $sgst_per REAL,
+            $sgst_amt REAL,
+            $igst_per REAL,
+            $igst_amt REAL,
+            $ces_amt REAL,
+            $ces_per REAL,
+            $net_amt REAL,
+            $rate REAL,
+            $unit_rate REAL,  
+            $packing TEXT,
+            $baserate REAL
+          )
+          ''');
+
+
+    // await db.execute('''DROP TABLE IF EXISTS salesMasterTable  ''');
+    /////////////////////
+        await db.execute('''DROP TABLE IF EXISTS returnMasterTable  ''');
+    await db.execute('''
+          CREATE TABLE returnMasterTable (
+            $id INTEGER PRIMARY KEY AUTOINCREMENT,
+            $return_id INTEGER,
+            $return_date TEXT,
+            $return_time TEXT,
+            $os TEXT NOT NULL,
+            $customerid TEXT,
+            $userid TEXT,
+            $areaid TEXT,
+            $bill_no TEXT,  
+            $total_qty INTEGER,
+            $payment_mode TEXT,
+            $credit_option TEXT,
+            $gross_tot REAL,
+            $dis_tot REAL,
+            $tax_tot REAL,
+            $ces_tot REAL,
+            $rounding REAL,
+            $net_amt REAL,
+            $state_status INTEGER,
+            $cancel INTEGER,
+            $cancel_staff TEXT,
+            $cancel_dateTime TEXT,
+            $brrid TEXT,
+            $status TEXT,
+            $reason TEXT,
+            $reference_no TEXT,
+            $total_price REAL,
+            $rflag INTEGER
+
+          )
+          ''');
+
+    print("returnMasterTable recreated");
+
+    await db.execute('''DROP TABLE IF EXISTS returnBagTable  ''');
+
+    await db.execute('''
+          CREATE TABLE returnBagTable (
+            $id INTEGER PRIMARY KEY AUTOINCREMENT,
+            $itemName TEXT NOT NULL,
+            $cartdate TEXT,
+            $carttime TEXT,
+            $os TEXT NOT NULL,
+            $customerid TEXT,
+            $cartrowno INTEGER,
+            $code TEXT,
+            $qty REAL,
+            $rate TEXT,
+            $unit_rate REAL,
+            $totalamount TEXT,
+            $method TEXT,
+            $hsn TEXT,
+            $tax_per REAL,
+            $tax_amt REAL,
+            $cgst_per REAL,
+            $cgst_amt REAL,
+            $sgst_per REAL,
+            $sgst_amt REAL,
+            $igst_per REAL,
+            $igst_amt REAL,
+            $ces_per REAL,
+            $ces_amt REAL,
+            $discount_per REAL,
+            $discount_amt REAL,
+            $cstatus INTEGER,
+            $net_amt REAL,
+            $pid INTEGER,
+            $unit_name TEXT,
+            $package REAL,
+            $baserate REAL,
+            $brrid TEXT,
+            $damagegood INTEGER    
+          )
+          ''');
+    print("returnBagTable  details recreated");
+
+    await db.execute('''DROP TABLE IF EXISTS returnDetailTable  ''');
+
+    await db.execute('''
+          CREATE TABLE returnDetailTable (
+            $id INTEGER PRIMARY KEY AUTOINCREMENT,
+            $item TEXT,
+            $os TEXT NOT NULL,
+            $return_id INTEGER,
+            $row_num INTEGER,
+            $code TEXT,
+            $qty INTEGER,
+            $unit TEXT,
+            $rate REAL,
+            $packing TEXT,
+            $baserate REAL,
+            $hsn TEXT,
+            $gross_amount REAL,
+            $dis_amt REAL,
+            $dis_per REAL,
+            $tax_amt REAL,
+            $tax_per REAL,
+            $cgst_per REAL,
+            $cgst_amt REAL,
+            $sgst_per REAL,
+            $sgst_amt REAL,
+            $igst_per REAL,
+            $igst_amt REAL,
+            $ces_amt REAL,
+            $ces_per REAL,
+            $net_amt REAL,
+            $qtydmg INTEGER
+          )
+          ''');
+              print("returnDetailTable  details recreated");
+
+  }
+
   ////////////////////////company details select///////////////////////////////////
   selectCompany(String? condition) async {
     List result;
@@ -816,7 +1054,7 @@ class OrderAppDB {
       return result;
     } else {
       return null;
-    }
+    }    
   }
 
   //////////////////////////////////////////////
@@ -1459,8 +1697,24 @@ class OrderAppDB {
 //////////////////////////product details ///////////////////////////////////////////
   Future insertProductDetails(ProductDetails pdata) async {
     final db = await database;
+
+//     await db.execute(''' alter TABLE productDetailsTable  add $rate5 TEXT;''');
+// await db.execute(''' alter TABLE productDetailsTable  add $rate6 TEXT;''');
+// await db.execute(''' alter TABLE productDetailsTable  add $rate7 TEXT;''');
+// await db.execute(''' alter TABLE productDetailsTable  add $rate8 TEXT;''');
+// await db.execute(''' alter TABLE productDetailsTable  add $rate9 TEXT;''');
+
     var query3 =
-        'INSERT INTO productDetailsTable(pid, code, ean, item, unit, categoryId, companyId, stock, hsn, tax, prate, mrp, cost, rate1, rate2, rate3, rate4, priceflag) VALUES(${pdata.pid},"${pdata.code}", "${pdata.ean}", "${pdata.item}", "${pdata.unit}", "${pdata.categoryId}", "${pdata.companyId}", "${pdata.stock}", "${pdata.hsn}", "${pdata.tax}", "${pdata.prate}", "${pdata.mrp}", "${pdata.cost}", "${pdata.rate1}", "${pdata.rate2}", "${pdata.rate3}", "${pdata.rate4}", "${pdata.priceFlag}")';
+        'INSERT INTO productDetailsTable(pid, code, ean, item, unit, categoryId,'
+        'companyId, stock, hsn, tax, prate, mrp, cost, rate1, rate2, rate3, rate4,'
+        ' priceflag,rate5, rate6, rate7, rate8,rate9) '
+        'VALUES(${pdata.pid},"${pdata.code}", "${pdata.ean}", "${pdata.item}",'
+        ' "${pdata.unit}", "${pdata.categoryId}", "${pdata.companyId}", "${pdata.stock}",'
+        ' "${pdata.hsn}", "${pdata.tax}", "${pdata.prate}", "${pdata.mrp}", "${pdata.cost}", '
+        ' "${pdata.rate1}", "${pdata.rate2}", "${pdata.rate3}", "${pdata.rate4}",'
+        ' "${pdata.priceFlag}","${pdata.rate5}", "${pdata.rate6}", "${pdata.rate7}", '
+        ' "${pdata.rate8}", "${pdata.rate9}")';
+
     var res = await db.rawInsert(query3);
     print(query3);
     print(res);
@@ -1815,17 +2069,23 @@ class OrderAppDB {
   }
 
   //////////////////////////////////////////////////////
-  Future<List<Map<String, dynamic>>> getCustomer(String aid) async {
-    print("enteredaid---${aid}");
+  Future<List<Map<String, dynamic>>> getCustomer(
+      String aid, String? cid) async {
+    print("enteredaid---${aid}....${cid}");
     Database db = await instance.database;
     var hname;
     // Provider.of<Controller>(context, listen: false).customerList.clear();
     if (aid == ' ' || aid.isEmpty) {
       hname = await db.rawQuery(
-          'SELECT  hname,ac_code FROM accountHeadsTable  order by hname');
+          'SELECT  hname,ac_code,ba FROM accountHeadsTable  order by hname');
     } else {
-      hname = await db.rawQuery(
-          'SELECT  hname,ac_code FROM accountHeadsTable WHERE area_id="${aid}" order by hname');
+      if (cid == ' ' || cid!.isEmpty) {
+        hname = await db.rawQuery(
+            'SELECT  hname,ac_code,ba FROM accountHeadsTable WHERE area_id="${aid}" order by hname');
+      } else {
+        hname = await db.rawQuery(
+            'SELECT  hname,ac_code,ba FROM accountHeadsTable WHERE area_id="${aid}" and hname LIKE "${cid}%" order by hname');
+      }
     }
 
     print(
@@ -2359,10 +2619,10 @@ class OrderAppDB {
     Database db = await instance.database;
     var unitquery = "";
     unitquery = "SELECT p.pid as pid,p.code code,p.item item, p.unit unit, 1 pkg ,p.companyId companyId,p.hsn hsn, " +
-        "p.tax tax,p.prate prate,p.mrp mrp,p.cost cost,p.rate1 rate1,p.rate2 rate2,p.rate3 rate3, " +
+        "p.tax tax,p.prate prate,p.mrp mrp,p.cost cost,p.rate1 rate1,p.rate2 rate2,p.rate3 rate3,p.rate4 rate4, " +
         "p.categoryId  categoryId from 'productDetailsTable' p where p.code= '$prod_code' union all " +
         "SELECT pd.pid,pd.code,pd.item,u.unit_name unit,u.package pkg,pd.companyId,pd.hsn, " +
-        "pd.tax,pd.prate,pd.mrp,pd.cost,pd.rate1 ,pd.rate2,pd.rate3, pd.categoryId  from 'productDetailsTable' pd " +
+        "pd.tax,pd.prate,pd.mrp,pd.cost,pd.rate1 ,pd.rate2,pd.rate3,pd.rate4 rate4, pd.categoryId  from 'productDetailsTable' pd " +
         "inner  join 'productUnits' u  ON u.pid = pd.pid where pd.code= '$prod_code' order by pkg";
 
     // unitquery = "SELECT p.pid prid,p.code prcode,p.item pritem, p.unit prunit, 1 pkg ,p.companyId prcid,p.hsn prhsn, " +
@@ -2415,8 +2675,8 @@ class OrderAppDB {
       // itemselectionquery =
       //     "SELECT p.pid prid,p.code prcode,p.item pritem ,p.hsn hsn ,p.rate1 prrate1,sum(s.qty) qty" +
       //         " from 'productDetailsTable' p left join 'salesBagTable' s on p.code  = s.code and s.customerid='$customerId' group by p.pid,p.code,p.item order by p.item";
-      itemselectionquery = " SELECT p.pid prid,p.code prcode,p.item pritem ,p.hsn hsn ,p.rate1 prrate1,sum(s.qty) qty, " +
-          "(cast(st.pstock as real)-IFNULL(x.slQty,0)-IFNULL(y.rtQty,0) ) ActStock ," +
+      itemselectionquery = " SELECT p.pid prid,p.code prcode,p.item pritem ,p.hsn hsn ,p.rate1 prrate1," +
+          "sum(s.qty) qty, IFNULL((cast(st.pstock as real)-IFNULL(x.slQty,0)-IFNULL(y.rtQty,0) ),0)+0.0  ActStock ," +
           "(case when sum(s.qty)>=0 then 1 else 0 end) sflag " +
           "from 'productDetailsTable' p " +
           "left join stockDetailsTable st on p.code=st.ppid and cast(st.pstock as real) >= 0 " +
@@ -2433,6 +2693,7 @@ class OrderAppDB {
       // itemselectionquery =
       //     "SELECT p.pid prid,p.code prcode,p.item pritem ,p.hsn hsn ,p.rate1 prrate1,sum(s.qty) qty" +
       //         " from 'productDetailsTable' p left join 'salesBagTable' s on p.code  = s.code and s.customerid='$customerId' group by p.pid,p.code,p.item order by p.item";
+
       itemselectionquery =
           " SELECT p.pid prid,p.code prcode,p.item pritem ,p.hsn hsn ,p.rate1 prrate1,sum(s.qty) qty " +
               "from 'productDetailsTable' p " +
@@ -2463,7 +2724,7 @@ class OrderAppDB {
     //     " order by b.cartrowno  DESC,k.pritem,k.prcode;";
     //  b.cartrowno DESC
 
-    print("unit queryyyy..$itemselectionquery");
+    print("unit queryyyy..selectfromsalebagTable_X001.....$itemselectionquery");
     result = await db.rawQuery(itemselectionquery);
 
     print("itemselection daat--${result}");
@@ -2815,19 +3076,13 @@ class OrderAppDB {
     } else if (type == "history pending") {
       query =
           'select accountHeadsTable.hname as cus_name,accountHeadsTable.ba as ba, accountHeadsTable.ac_ad1 as address, accountHeadsTable.ac_gst as gstin, salesMasterTable.sales_id sales_id,salesMasterTable.rounding roundoff, salesMasterTable.os  || salesMasterTable.sales_id as sale_Num,salesMasterTable.customer_id Cus_id,salesMasterTable.salesdate   Date, count(salesDetailTable.row_num) count,salesMasterTable.gross_tot grossTot,salesMasterTable.payment_mode payment_mode,salesMasterTable.credit_option creditoption, salesMasterTable.tot_aftr_disc, salesMasterTable.tax_tot as taxtot, salesMasterTable.dis_tot as distot ,salesMasterTable.cancel as cancel  from salesMasterTable inner join salesDetailTable on salesMasterTable.sales_id=salesDetailTable.sales_id inner join accountHeadsTable on accountHeadsTable.ac_code= salesMasterTable.customer_id where salesMasterTable.salesdate="${date}" and salesMasterTable.status == 0  $condition group by salesMasterTable.sales_id';
-    } 
-    else if (type == "sale report") 
-    {
+    } else if (type == "sale report") {
       query =
           'select accountHeadsTable.hname as cus_name,accountHeadsTable.ba as ba, accountHeadsTable.ac_ad1   as address, accountHeadsTable.ac_gst as gstin, salesMasterTable.sales_id sales_id,salesMasterTable.rounding roundoff, salesMasterTable.os  || salesMasterTable.sales_id as sale_Num,salesMasterTable.customer_id Cus_id,salesMasterTable.salesdate   Date, count(salesDetailTable.row_num) count,salesMasterTable.gross_tot grossTot,salesMasterTable.payment_mode payment_mode,salesMasterTable.credit_option creditoption, salesMasterTable.tot_aftr_disc, salesMasterTable.tax_tot as taxtot, salesMasterTable.dis_tot as distot,salesMasterTable.cancel as cancel  from salesMasterTable inner join salesDetailTable on salesMasterTable.sales_id=salesDetailTable.sales_id inner join accountHeadsTable on accountHeadsTable.ac_code= salesMasterTable.customer_id where salesMasterTable.salesdate="${date}"  and salesMasterTable.cancel == 0 $condition group by salesMasterTable.sales_id';
-    } 
-    else if (type == "Return report") 
-    {
+    } else if (type == "Return report") {
       query =
           'select accountHeadsTable.hname as cus_name,accountHeadsTable.ba as ba, accountHeadsTable.ac_ad1 as address, accountHeadsTable.ac_gst as gstin, returnMasterTable.return_id sales_id,returnMasterTable.rounding roundoff, returnMasterTable.os  || returnMasterTable.return_id as sale_Num,returnMasterTable.customerid Cus_id,returnMasterTable.return_date Date,count(returnDetailTable.row_num) count,returnMasterTable.gross_tot grossTot,returnMasterTable.payment_mode payment_mode,returnMasterTable.credit_option creditoption,  returnMasterTable.tax_tot as taxtot, returnMasterTable.dis_tot as distot,returnMasterTable.cancel as cancel from returnMasterTable inner join returnDetailTable on returnMasterTable.return_id=returnDetailTable.return_id inner join accountHeadsTable on accountHeadsTable.ac_code= returnMasterTable.customerid where returnMasterTable.return_date="${date}"and returnMasterTable.cancel == 0 $condition group by returnMasterTable.return_id';
-    } 
-    else 
-    {
+    } else {
       query =
           'select accountHeadsTable.hname as cus_name,accountHeadsTable.ba as ba, accountHeadsTable.ac_ad1 as address, accountHeadsTable.ac_gst as gstin, salesMasterTable.sales_id sales_id,salesMasterTable.rounding roundoff, salesMasterTable.os  || salesMasterTable.sales_id as sale_Num,salesMasterTable.customer_id Cus_id,salesMasterTable.salesdate   Date, count(salesDetailTable.row_num) count,salesMasterTable.gross_tot grossTot,salesMasterTable.payment_mode payment_mode,salesMasterTable.credit_option creditoption, salesMasterTable.tot_aftr_disc, salesMasterTable.tax_tot as taxtot, salesMasterTable.dis_tot as distot,salesMasterTable.cancel as cancel  from salesMasterTable inner join salesDetailTable on salesMasterTable.sales_id=salesDetailTable.sales_id inner join accountHeadsTable on accountHeadsTable.ac_code= salesMasterTable.customer_id where salesMasterTable.salesdate="${date}"  $condition group by salesMasterTable.sales_id';
     }
@@ -3310,7 +3565,7 @@ class OrderAppDB {
         "SELECT returnDetailTable.code as code,returnDetailTable.hsn as hsn," +
         " returnDetailTable.item as item, returnDetailTable.qty as qty," +
         " returnDetailTable.rate as rate,returnDetailTable.unit as unit," +
-        " returnDetailTable.packing as packing, " +
+        " returnDetailTable.packing as packing,returnDetailTable.gross_amount/returnDetailTable.qty  unit_rate, " +
         // " returnDetailTable.unit_rate as unit_rate, " +
         " returnDetailTable.gross_amount as gross," +
         " returnDetailTable.dis_per as disc_per,returnDetailTable.dis_amt as disc_amt," +
@@ -3579,6 +3834,28 @@ class OrderAppDB {
     print("result menu common----$result");
     return result;
   }
+
+////////////////////////collection print
+  Get_Collection_details(String? condition) async {
+    List<Map<String, dynamic>> result;
+    Database db = await instance.database;
+
+    print("condition of collection ----$condition");
+
+    if (condition == null || condition.isEmpty) {
+      result = await db.rawQuery(
+          "SELECT * FROM collectionTable inner join accountHeadsTable on  accountHeadsTable.ac_code=rec_cusid   ");
+      print("if conditon check======");
+    } else {
+      result = await db.rawQuery(
+          "SELECT collectionTable.id,rec_date,rec_time,rec_cusid,rec_series,rec_amount,rec_mode,rec_note,rec_staffid,hname ,ac_ad1,ac_ad2 FROM collectionTable inner join accountHeadsTable on accountHeadsTable.ac_code=collectionTable.rec_cusid   WHERE $condition ");
+      print("else conditon check======");
+      print("resulte list======$result");
+    }
+    print("result from db of get_collection----$result");
+    return result;
+  }
+
   ////////////////////////DELETE TABLE ////////////////////////////////////
 
   // getReportRemarkOrderDetails() async {
@@ -3700,7 +3977,7 @@ class OrderAppDB {
     int order_id;
     Database db = await instance.database;
     var qry =
-        "SELECT MAX(value) maxval FROM (SELECT value FROM maxSeriesTable WHERE prefix = '$prefix' UNION ALL SELECT MAX($maxfield)+1  as value FROM $table)";
+        "SELECT MAX(IFNULL(value,0))+1 maxval FROM (SELECT value FROM maxSeriesTable WHERE prefix = '$prefix' UNION ALL SELECT MAX($maxfield)+1  as value FROM $table)";
     print("maxseries......$qry");
     result = await db.rawQuery(qry);
     // int maxtabid = int.parse(result[0]["value"]);

@@ -62,6 +62,8 @@ class _OrderFormState extends State<OrderForm> with TickerProviderStateMixin {
   TextEditingController fieldText = TextEditingController();
   // TextEditingController areatext = TextEditingController();
   TextEditingController customertext = TextEditingController();
+  TextEditingController customerSearch = TextEditingController();
+  // final List<String> _items=Provider.of<Controller>(context).customerCount
 
   List? splitted1;
   List<DataRow> dataRows = [];
@@ -91,6 +93,10 @@ class _OrderFormState extends State<OrderForm> with TickerProviderStateMixin {
   DateTime now = DateTime.now();
   String? date;
   String? branch_id;
+
+  // TextEditingController searchController = TextEditingController();
+  List<Map<String, dynamic>> filteredList = [];
+
   @override
   void didChangeDependencies() {
     // TODO: implement didChangeDependencies
@@ -107,6 +113,7 @@ class _OrderFormState extends State<OrderForm> with TickerProviderStateMixin {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<Controller>(context, listen: false).getOrderno();
       Provider.of<Controller>(context, listen: false).customer_visibility;
+
       date = DateFormat('yyyy-MM-dd HH:mm:ss').format(now);
       print(
           "seelected area-----${Provider.of<Controller>(context, listen: false).areaidFrompopup}");
@@ -116,7 +123,9 @@ class _OrderFormState extends State<OrderForm> with TickerProviderStateMixin {
       if (Provider.of<Controller>(context, listen: false).areaId != null) {
         print("from init stte-----");
         Provider.of<Controller>(context, listen: false).getCustomer(
-            Provider.of<Controller>(context, listen: false).areaId, context);
+            Provider.of<Controller>(context, listen: false).areaId,
+            '',
+            context);
       }
     });
     // if (Provider.of<Controller>(context, listen: false).selectedAreaId !=
@@ -133,6 +142,8 @@ class _OrderFormState extends State<OrderForm> with TickerProviderStateMixin {
     print("wudiget.areaNmae----${widget.areaname}");
 
     sharedPref();
+    filteredList =
+        Provider.of<Controller>(context, listen: false).custmerDetails;
   }
 
   sharedPref() async {
@@ -153,9 +164,40 @@ class _OrderFormState extends State<OrderForm> with TickerProviderStateMixin {
     // Provider.of<Controller>(context, listen: false).getArea(sid!);
   }
 
+  void filterSearch(String query) {
+    print("===filterrrrrr==");
+    setState(() {
+      Provider.of<Controller>(context, listen: false)
+            .getCustomer(_selectedAreaId, "", context);
+      if (query.isEmpty) {
+        print("emtyyyyy---");
+        
+        filteredList =
+            Provider.of<Controller>(context, listen: false).custmerDetails;
+            print("filter list==$filteredList");
+      } else {
+        print("not  emtyyyyy---");
+        Provider.of<Controller>(context, listen: false)
+            .getCustomer(_selectedAreaId, query, context);
+
+        filteredList = Provider.of<Controller>(context, listen: false)
+            .custmerDetails
+            .where((item) => item['hname']
+                .toString()
+                .toLowerCase()
+                .contains(query.toLowerCase()))
+            .toList();
+      }
+      print("new list==$filteredList");
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     double topInsets = MediaQuery.of(context).viewInsets.top;
+    List<Map<String, dynamic>> customerList1 =
+        Provider.of<Controller>(context).custmerDetails;
+    List<Map<String, dynamic>> resCus = [];
 
     print("widget.areaname---${widget.areaname}");
 
@@ -311,8 +353,7 @@ class _OrderFormState extends State<OrderForm> with TickerProviderStateMixin {
                                           if (value.text.isEmpty) {
                                             return [];
                                           } else {
-                                            print(
-                                                "values.areDetails----${values.areDetails}");
+                                            print("-${values.areDetails}");
                                             return values.areDetails.where(
                                                 (suggestion) =>
                                                     suggestion["aname"]
@@ -356,8 +397,8 @@ class _OrderFormState extends State<OrderForm> with TickerProviderStateMixin {
 
                                             Provider.of<Controller>(context,
                                                     listen: false)
-                                                .getCustomer(
-                                                    _selectedAreaId, context);
+                                                .getCustomer(_selectedAreaId,
+                                                    '', context);
                                           });
                                         },
                                         fieldViewBuilder: (BuildContext context,
@@ -419,6 +460,7 @@ class _OrderFormState extends State<OrderForm> with TickerProviderStateMixin {
                                                             listen: false)
                                                         .getCustomer(
                                                             _selectedAreaId,
+                                                            '',
                                                             context);
                                                     // setState(() {});
                                                   },
@@ -686,7 +728,7 @@ class _OrderFormState extends State<OrderForm> with TickerProviderStateMixin {
                                                                               context)
                                                                           .size
                                                                           .height *
-                                                                      0.65
+                                                                      0.95
                                                                   : size.height *
                                                                       0.2,
                                                               color:
@@ -728,6 +770,45 @@ class _OrderFormState extends State<OrderForm> with TickerProviderStateMixin {
                                                                           )
                                                                         : const Text(
                                                                             ''),
+                                                                    ///////////search customer/////////
+                                                                    // values.custmerDetails
+                                                                    //         .isNotEmpty
+                                                                    //     ? TextFormField(
+                                                                    //         onTapAlwaysCalled:
+                                                                    //             true,
+                                                                    //         controller:
+                                                                    //             customerSearch,
+                                                                    //         onChanged:(valu) {
+                                                                                
+                                                                    //           valu = customerSearch.text;
+                                                                    //           print(valu);
+
+                                                                    //           Provider.of<Controller>(context, listen: false).getCustomer(
+                                                                    //               _selectedAreaId,
+                                                                                
+                                                                    //               customerSearch.text.trim(),
+                                                                    //               context);
+                                                                    //         },
+                                                                    //         decoration:
+                                                                    //             InputDecoration(
+                                                                    //           suffixIcon: IconButton(
+                                                                    //               onPressed: () {
+                                                                    //                 Provider.of<Controller>(context, listen: false).getCustomer(_selectedAreaId, '', context);
+
+                                                                    //                 customerSearch.clear();
+                                                                    //                 values.custmerDetails.clear;
+
+                                                                    //                 print("clear searchh");
+                                                                    //               },
+                                                                    //               icon: Icon(Icons.cancel)),
+                                                                    //           border: OutlineInputBorder(borderRadius: BorderRadius.circular(25)),
+                                                                    //           hintText: "Search Here...",
+                                                                    //           enabled: true,
+                                                                    //           enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(25)),
+                                                                    //         ),
+                                                                    //       )
+                                                                    //     : const Text(
+                                                                    //         ''),
                                                                     values.custmerDetails
                                                                             .isNotEmpty
                                                                         ? const Divider(
@@ -740,50 +821,12 @@ class _OrderFormState extends State<OrderForm> with TickerProviderStateMixin {
                                                                           )
                                                                         : const Text(
                                                                             ""),
+
                                                                     values.custmerDetails
                                                                             .isNotEmpty
-                                                                        ? Expanded(
-                                                                            child: Padding(
-                                                                                padding: const EdgeInsets.only(left: 10, top: 3),
-                                                                                child: ListView.builder(
-                                                                                  itemCount: values.custmerDetails.length,
-                                                                                  itemBuilder: (context, index) {
-                                                                                    return ListTile(
-                                                                                      trailing: const Icon(Icons.arrow_circle_right_rounded),
-                                                                                      onTap: () {
-                                                                                        // Provider.of<Controller>(context, listen: false).getBalance(cid, values.custmerDetails[index]['ac_code']!, context);
-                                                                                        setState(() {
-                                                                                          customertext.text = values.custmerDetails[index]['hname'].toString().trimLeft();
-                                                                                          custmerId = values.custmerDetails[index]['ac_code'].toString().trimLeft();
-                                                                                        });                                                         
-                                                                                        FocusManager.instance.primaryFocus?.unfocus();
-                                                                                        // Provider.of<Controller>(context, listen: false).setCustomerName(values.custmerDetails[index]['hname']);
-                                                                                        // Navigator.of(context).push(
-                                                                                        //   PageRouteBuilder(
-                                                                                        //     opaque: false, // set to false
-                                                                                        //     pageBuilder: (_, __, ___) => OrderForm(widget.areaname, "sales"),
-                                                                                        //   ),
-                                                                                        // );
-                                                                                        //      customerName =
-                                                                                        // values.custmerDetails[index]
-                                                                                        //     ['hname'];
-                                                                                        print("customer name.......${Provider.of<Controller>(context, listen: false).customer_Name}");
-                                                                                        Navigator.pop(context);
-                                                                                      },
-                                                                                      visualDensity: const VisualDensity(horizontal: -4, vertical: -4),
-                                                                                      textColor: P_Settings.wavecolor,
-                                                                                      title: Text(
-                                                                                        "${values.custmerDetails[index]['hname'].toString().trimLeft()}",
-                                                                                        style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
-                                                                                      ),
-
-                                                                                      // onTap: (() {
-                                                                                      //   print("selected index");
-                                                                                      // }),
-                                                                                    );
-                                                                                  },
-                                                                                )),
-                                                                          )
+                                                                        ? cstmrList(
+                                                                            values,
+                                                                            values.custmerDetails)
                                                                         : Text(
                                                                             "No Customer Found!!!",
                                                                             style:
@@ -1504,28 +1547,29 @@ class _OrderFormState extends State<OrderForm> with TickerProviderStateMixin {
                                   SizedBox(
                                     height: size.height * 0.01,
                                   ),
-                                  // values.balanceLoading
-                                  //     ? SpinKitThreeBounce(
-                                  //         color: Colors.blue,
-                                  //         size: 15,
-                                  //       )
-                                  //     : values.balance == null
-                                  //         ? Container()
-                                  //         : Row(
-                                  //             mainAxisAlignment:
-                                  //                 MainAxisAlignment.center,
-                                  //             children: [
-                                  //               Text("Outstandng : "),
-                                  //               Text(
-                                  //                 values.balance!
-                                  //                     .toStringAsFixed(2),
-                                  //                 style: TextStyle(
-                                  //                     fontSize: 20,
-                                  //                     fontWeight: FontWeight.bold,
-                                  //                     color: Colors.green),
-                                  //               ),
-                                  //             ],
-                                  //           ),
+                                  values.balanceLoading
+                                      ? SpinKitThreeBounce(
+                                          color: Colors.blue,
+                                          size: 15,
+                                        )
+                                      : values.balance == null
+                                          ? Container()
+                                          : Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: [
+                                                Text("Outstandng : "),
+                                                Text(
+                                                  values.balance!
+                                                      .toStringAsFixed(2),
+                                                  style: TextStyle(
+                                                      fontSize: 20,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color: Colors.green),
+                                                ),
+                                              ],
+                                            ),
                                 ],
                               ),
                             ),
@@ -1542,6 +1586,70 @@ class _OrderFormState extends State<OrderForm> with TickerProviderStateMixin {
       ),
     );
   }
+
+  Expanded cstmrList(Controller values, List<Map<String, dynamic>> list) {
+    return Expanded(
+      child: Padding(
+          padding: const EdgeInsets.only(left: 10, top: 3),
+          child: ListView.builder(
+            itemCount: values.custmerDetails.length,
+            itemBuilder: (context, index) {
+              return ListTile(
+                trailing: const Icon(Icons.arrow_circle_right_rounded),
+                onTap: () {
+                  // Provider.of<Controller>(context, listen: false).getBalance(cid, values.custmerDetails[index]['ac_code']!, context);
+                  setState(() {
+                    customertext.text = values.custmerDetails[index]['hname']
+                        .toString()
+                        .trimLeft();
+                    custmerId = values.custmerDetails[index]['ac_code']
+                        .toString()
+                        .trimLeft();
+                  });
+                  FocusManager.instance.primaryFocus?.unfocus();
+                  // Provider.of<Controller>(context, listen: false).setCustomerName(values.custmerDetails[index]['hname']);
+                  // Navigator.of(context).push(
+                  //   PageRouteBuilder(
+                  //     opaque: false, // set to false
+                  //     pageBuilder: (_, __, ___) => OrderForm(widget.areaname, "sales"),
+                  //   ),
+                  // );
+                  //      customerName =
+                  // values.custmerDetails[index]
+                  //     ['hname'];
+                  print(
+                      "customer name.......${Provider.of<Controller>(context, listen: false).customer_Name}");
+                  Navigator.pop(context);
+                },
+                visualDensity:
+                    const VisualDensity(horizontal: -4, vertical: -4),
+                textColor: P_Settings.wavecolor,
+                title: Text(
+                  "${values.custmerDetails[index]['hname'].toString().trimLeft()}",
+                  style: const TextStyle(
+                      fontSize: 13, fontWeight: FontWeight.bold),
+                ),
+
+                subtitle: Text(
+                  "${values.custmerDetails[index]['ba'].toString().trimLeft()}"
+                ),
+
+                // onTap: (() {
+                //   print("selected index");
+                // }),
+              );
+            },
+          )),
+    );
+  }
+  //   void _filterList() {
+  //   final query = customerSearch.text.toLowerCase();
+  //   setState(() {
+  //     _filteredItems = Provider.of<Controller>(context).custmerDetails
+  //         .where((item) => item.toLowerCase().contains(query))
+  //         .toList();
+  //   });
+  // }
 
 ///////////////////////////////////////////////////////////////////
 }

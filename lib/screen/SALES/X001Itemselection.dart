@@ -83,7 +83,7 @@ class _SalesItemState extends State<SalesItem> {
     print(
         "customer id....os...rateid .....${widget.customerId}--${widget.os} , ${widget.cusrateid}");
     products = Provider.of<Controller>(context, listen: false).productName;
-    print("products---${products}");
+    print("products123---${products}");
     Provider.of<Controller>(context, listen: false).selectSettings(
         "set_code in ('SL_RATE_EDIT','SL_TAX_CALC','SL_UPLOAD_DIRECT') ");
     Provider.of<Controller>(context, listen: false).getOrderno();
@@ -379,55 +379,7 @@ class _SalesItemState extends State<SalesItem> {
                       suffixIcon: value.isVisible
                           ? Wrap(
                               children: [
-                                // IconButton(
-                                //     icon: Icon(
-                                //       Icons.done,
-                                //       size: 20,
-                                //     ),
-                                //     onPressed: () async {
-                                //       // Provider.of<Controller>(context,
-                                //       //         listen: false)
-                                //       //     .getSaleProductList(
-                                //       //         widget.customerId);
-
-                                //       Provider.of<Controller>(context,
-                                //               listen: false)
-                                //           .getSaleBagDetails(
-                                //               widget.customerId, widget.os);
-                                //       Provider.of<Controller>(context,
-                                //               listen: false)
-                                //           .searchkey = searchcontroll.text;
-
-                                //       Provider.of<Controller>(context,
-                                //               listen: false)
-                                //           .setIssearch(true);
-                                //       // print("hjdf----$list");
-
-                                //       Provider.of<Controller>(context,
-                                //                   listen: false)
-                                //               .salefilterCompany
-                                //           ? Provider.of<Controller>(context,
-                                //                   listen: false)
-                                //               .searchProcess_X001(
-                                //                   widget.customerId,
-                                //                   widget.os,
-                                //                   Provider.of<Controller>(
-                                //                           context,
-                                //                           listen: false)
-                                //                       .salefilteredeValue!,
-                                //                   "sales",
-                                //                   value.salesitemList2,
-                                //                   "sales")
-                                //           : Provider.of<Controller>(context,
-                                //                   listen: false)
-                                //               .searchProcess_X001(
-                                //                   widget.customerId,
-                                //                   widget.os,
-                                //                   "",
-                                //                   "sales",
-                                //                   value.salesitemList2,
-                                //                   "sales");
-                                //     }),
+                               
                                 IconButton(
                                     icon: Icon(
                                       Icons.close,
@@ -678,6 +630,7 @@ class _SalesItemState extends State<SalesItem> {
                             child: Card(
                               child: ListTile(
                                 onTap: () async {
+                                  print("clicked");
                                   Provider.of<Controller>(context,
                                               listen: false)
                                           .product_code =

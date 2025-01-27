@@ -67,6 +67,8 @@ dependencies:
   # another_imin_printer: ^0.5.0
   
   imin_printer: ^0.6.8
+  number_to_indian_words: ^1.0.1
+  number_to_words_english: ^2.0.2
   # esc_pos_utils: ^1.1.0
   # flutter_esc_pos_utils: ^1.0.1
   # esc_pos_utils: ^1.0.0

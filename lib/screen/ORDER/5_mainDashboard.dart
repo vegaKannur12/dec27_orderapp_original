@@ -109,6 +109,8 @@ class _MainDashboardState extends State<MainDashboard> {
                     scrollDirection: Axis.vertical,
                     child: Column(
                       children: [
+                        
+                        Text("VPOS220125",style: TextStyle(fontWeight: FontWeight.bold),),
                         Padding(
                           padding: const EdgeInsets.only(top: 11.0, left: 08),
                           child: Row(
@@ -688,7 +690,7 @@ class _MainDashboardState extends State<MainDashboard> {
                               setState(() {
                                 selected = item;
                               });
-                              print("se;ected---$item");
+                              print("selected---$item");
                             }
                           },
                         ),
